@@ -32,7 +32,7 @@ def getMemberData(congress, chamber, endPoint):
 
 def stripData(allMemberDF):
   fecCandsDF = allMemberDF[allMemberDF['fec_candidate_id'] != '']
-  cleanedDF = fecCandsDF[['fec_candidate_id', 'dw_nominate', 'crp_id', 'icpsr_id']]
+  cleanedDF = fecCandsDF[['fec_candidate_id', 'dw_nominate', 'crp_id']] #, 'icpsr_id' add if using addVoteViewData
   cleanedDF.dropna(inplace=True)
   #print(cleanedDF)
   return cleanedDF
