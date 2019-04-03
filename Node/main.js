@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const morganLogger = require('morgan');
 const mongoose = require('mongoose');
 const config = require('./config');
+const path = require('path');
+
 
 // configuration ===============================================================
 const port = process.env.PORT || 8081;
@@ -15,6 +17,10 @@ const port = process.env.PORT || 8081;
 const http = require('http');
 
 http.createServer(app).listen(port);
+
+app.use(express.static(path.join(__dirname, '/dist'), { maxAge: '1y' }));
+app.set('views', path.join(__dirname, '/dist'));
+app.engine('html', require('ejs').renderFile);
 
 // connect to db
 mongoose.connect(config.DBurl);
@@ -30,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // routes ======================================================================
 // load routes
-require('./routes.js')(app);
+require('./routes/routes.js')(app);
 // launch ======================================================================
 // server.listen(port);
 console.log(`The magic happens on port ${port}`);
