@@ -15,7 +15,7 @@ def getMemberData(congress, chamber, endPoint):
 
   members = []
 
-  # For each request we'll check the status and then use results to extend list of member JSON
+  # For each request we'll check the status and then use results to extend list of member JSONs
   for i,resp in enumerate(apiRequestList):
       if (resp.status_code == requests.codes.ok):
           respJSON = resp.json()
@@ -32,7 +32,7 @@ def getMemberData(congress, chamber, endPoint):
 
 def stripData(allMemberDF):
   fecCandsDF = allMemberDF[allMemberDF['fec_candidate_id'] != '']
-  cleanedDF = fecCandsDF[['fec_candidate_id', 'dw_nominate', 'crp_id']] #, 'icpsr_id' add if using addVoteViewData
+  cleanedDF = fecCandsDF[['fec_candidate_id', 'dw_nominate', 'crp_id', 'icpsr_id']] #, 'icpsr_id' add if using addVoteViewData
   cleanedDF.dropna(inplace=True)
   #print(cleanedDF)
   return cleanedDF
@@ -42,11 +42,15 @@ def stripData(allMemberDF):
 def addVoteViewData(DF):
   votviewMemberInfo = "https://voteview.com/static/data/out/members/HSall_members.csv"
   voteviewMemberDF = pd.read_csv(votviewMemberInfo)
+  print(voteviewMemberDF.columns)
   cleanedDF = voteviewMemberDF[['icpsr', 'nominate_dim1', 'nominate_dim2']]
   cleanedDF.dropna(inplace=True)
   cleanedDF.rename(columns={'icpsr':'icpsr_id'}, inplace=True)
+  cleanedDF.sort_values(by="icpsr_id", inplace=True)
+  DF.sort_values(by="icpsr_id", inplace=True)
   print(cleanedDF)
-  merged = pd.merge(DF, cleanedDF, on='icpsr_id', how='outer')
+  print(DF)
+  merged = pd.merge(DF, cleanedDF, on='icpsr_id', how='left')
   #merged.dropna(inplace=True)
   print(merged)
 
@@ -62,7 +66,7 @@ if __name__ == "__main__":
 
   allMemberDF = getMemberData(congress, chamber, endPoint)
   fecMemberDF = stripData(allMemberDF)
-  #addVoteViewData(fecMemberDF)
+  addVoteViewData(fecMemberDF)
 
 
 
