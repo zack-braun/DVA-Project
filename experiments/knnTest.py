@@ -15,7 +15,7 @@ def getMemberData(congress, chamber, endPoint):
 
   members = []
 
-  # For each request we'll check the status and then use results to extend list of member JSON
+  # For each request we'll check the status and then use results to extend list of member JSONs
   for i,resp in enumerate(apiRequestList):
       if (resp.status_code == requests.codes.ok):
           respJSON = resp.json()
