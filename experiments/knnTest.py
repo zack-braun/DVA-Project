@@ -30,29 +30,67 @@ def getMemberData(congress, chamber, endPoint):
   #print(allMemberDF.head())
   return allMemberDF
 
+def addOpenSecretsIDs(df):
+  usAPIBaseUrl = ["https://theunitedstates.io/congress-legislators/"]
+  usAPIEndpoints = ["legislators-current.json", "legislators-historical.json"]
+  # We can read in some JSON info from https://theunitedstates.io/congress-legislators/legislators-current.json
+  usAPILeg = [requests.get(combo[0]+combo[1]) for combo in itertools.product(usAPIBaseUrl, usAPIEndpoints)]
+  usAPIMembers = [member for request in usAPILeg for member in request.json() ]
+
+  usAPIMemberDF = pd.DataFrame(usAPIMembers)
+
+  MemberIdDF = usAPIMemberDF.id.apply(pd.Series)
+  MemberIdDF = MemberIdDF.loc[:,['govtrack', 'opensecrets']].rename(columns = {'govtrack':'govtrack_id'})
+
+  MemberIdDF.loc[:, 'govtrack_id2'] = MemberIdDF.govtrack_id.astype(int)
+  MemberIdDF.drop({'govtrack_id'}, axis = 1, inplace = True)
+
+  # Create different typed column to join on
+  df.loc[:, 'govtrack_id2'] = df.govtrack_id.astype(int)
+
+  # Join in the opensecrets Ids
+  df = pd.merge(df, MemberIdDF[MemberIdDF.govtrack_id2.notna()], on = 'govtrack_id2', how = 'left')
+
+  #delete dup govtrack_ids
+  del df['govtrack_id2']
+
+  return df
+
 def stripData(allMemberDF):
   fecCandsDF = allMemberDF[allMemberDF['fec_candidate_id'] != '']
-  cleanedDF = fecCandsDF[['fec_candidate_id', 'dw_nominate', 'crp_id', 'icpsr_id']] #, 'icpsr_id' add if using addVoteViewData
+  cleanedDF = fecCandsDF[['dw_nominate', 'govtrack_id']] #, 'icpsr_id' add if using addVoteViewData
   cleanedDF.dropna(inplace=True)
   #print(cleanedDF)
   return cleanedDF
 
+def createCatTable():
 
-#not working
-def addVoteViewData(DF):
-  votviewMemberInfo = "https://voteview.com/static/data/out/members/HSall_members.csv"
-  voteviewMemberDF = pd.read_csv(votviewMemberInfo)
-  print(voteviewMemberDF.columns)
-  cleanedDF = voteviewMemberDF[['icpsr', 'nominate_dim1', 'nominate_dim2']]
-  cleanedDF.dropna(inplace=True)
-  cleanedDF.rename(columns={'icpsr':'icpsr_id'}, inplace=True)
-  cleanedDF.sort_values(by="icpsr_id", inplace=True)
-  DF.sort_values(by="icpsr_id", inplace=True)
-  print(cleanedDF)
-  print(DF)
-  merged = pd.merge(DF, cleanedDF, on='icpsr_id', how='left')
-  #merged.dropna(inplace=True)
-  print(merged)
+
+def lookupCategorization(sector):
+  print(sector)
+
+
+def getCampaignFinance(row, catTable):
+  print(row)
+  url = "https://www.opensecrets.org/api/?method=candIndustry"
+  params = {'apikey': apiKey4OpenSecrets,
+            'cid':'N00007360',
+            'output': 'json'}
+  r = requests.get(url, params=params)
+  print(r.url)
+  print(r)
+  jsoned = r.json()
+  dicti = jsoned['response']['industries']['industry']
+  financeDictArr = []
+  for industry in dicti:
+    category = lookupCategorization(industry['industry_code'])
+    #financeDict{
+                #'industry': industry['industry_code'],
+                #'total':industry['total']
+                #}
+    #financeDictArr.append(financeDict)
+
+
 
 
 if __name__ == "__main__":
@@ -65,8 +103,12 @@ if __name__ == "__main__":
   endPoint = "members.json"
 
   allMemberDF = getMemberData(congress, chamber, endPoint)
-  fecMemberDF = stripData(allMemberDF)
-  addVoteViewData(fecMemberDF)
+  stripedMemberDF = stripData(allMemberDF)
+  openSecretDF = addOpenSecretsIDs(stripedMemberDF)
+  print(openSecretDF)
+  getCampaignFinance(openSecretDF[:1])
+
+
 
 
 
