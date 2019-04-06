@@ -5,8 +5,13 @@ const apiKey4OpenSecrets = 'd3f8992dc4e2d3ad0d1c50fcbecea064';
 // reveals main.js properties to routes
 module.exports = function (app) {
 
-  app.get('/allUser', (req, res) => {
-    // pass
+  app.post('/submitSurvey', (req, res) => {
+    console.log(req.body)
+    // Send data to ML model
+    // Receive output from ML model
+    const matches = ['N00007360'];
+    // Send to front-end
+    res.send({success: true, matches})
   });
 
   app.get('/*', (req, res) => {
