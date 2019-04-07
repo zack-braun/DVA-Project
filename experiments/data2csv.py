@@ -91,7 +91,7 @@ def stripData(allMemberDF):
                           'total_votes',
                           'votes_with_party_pct']] #, 'icpsr_id' add if using addVoteViewData
   #print(cleanedDF)
-  cleanedDF.dropna(subset = ['govtrack_id'], inplace=True)
+  cleanedDF.dropna(subset = ['govtrack_id', 'dw_nominate'], inplace=True)
   #print(cleanedDF)
   return cleanedDF
 
