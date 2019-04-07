@@ -3,6 +3,7 @@ import itertools
 import numpy as np
 import pandas as pd
 import json
+import csv
 
 apiKey4ProPublica = 'gKufsGOW6vGeCqfYQiVNkuITq7h1fytjlfaL1Qtq';
 apiKey4OpenSecrets = 'd3f8992dc4e2d3ad0d1c50fcbecea064';
@@ -64,33 +65,59 @@ def stripData(allMemberDF):
   return cleanedDF
 
 def createCatTable():
+  with open('Catcode.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    CatTableDict = {}
+    for row in csv_reader:
+        if line_count == 0:
+            print(f'Column names are {", ".join(row)}')
+            line_count += 1
+        else:
+            print(row)
+            CatTableDict[row[2][0]] = {
+                                    'CatCode': row[0],
+                                    'name': row[1]}
+            line_count += 1
+    print(f'Processed {line_count} lines.')
+    return CatTableDict
 
 
-def lookupCategorization(sector):
-  print(sector)
+def lookupCategorization(sector, catTable):
+  row = catTable[sector]
+  return row['name']
+
 
 
 def getCampaignFinance(row, catTable):
   print(row)
-  url = "https://www.opensecrets.org/api/?method=candIndustry"
+  url = "https://www.opensecrets.org/api/?method=candSector"
   params = {'apikey': apiKey4OpenSecrets,
             'cid':'N00007360',
             'output': 'json'}
   r = requests.get(url, params=params)
   print(r.url)
   print(r)
+  print(r.json())
   jsoned = r.json()
-  dicti = jsoned['response']['industries']['industry']
-  financeDictArr = []
+  dicti = jsoned['response']['sectors']['sector']
+  financeDict = {
+                'Health': 0,
+                'Finance, Insurance & Real Estate': 0,
+                'Defense & Global Relations': 0,
+                'Agriculture, Food, & Consumer Goods': 0,
+                'Labor/Employment':0,
+                'Energy & Transportation': 0}
   for industry in dicti:
-    category = lookupCategorization(industry['industry_code'])
-    #financeDict{
-                #'industry': industry['industry_code'],
-                #'total':industry['total']
-                #}
-    #financeDictArr.append(financeDict)
-
-
+    print(industry)
+    category = lookupCategorization(industry['@attributes']['sectorid'], catTable)
+    if category == 'EXCLUDED':
+      pass
+      #do nothing
+    else:
+      financeDict[category] += (int)(industry['@attributes']['total'])
+  print(financeDict)
+  return financeDict
 
 
 if __name__ == "__main__":
@@ -102,11 +129,12 @@ if __name__ == "__main__":
   chamber = ["house", "senate"]
   endPoint = "members.json"
 
+  catTable = createCatTable()
   allMemberDF = getMemberData(congress, chamber, endPoint)
   stripedMemberDF = stripData(allMemberDF)
   openSecretDF = addOpenSecretsIDs(stripedMemberDF)
   print(openSecretDF)
-  getCampaignFinance(openSecretDF[:1])
+  getCampaignFinance(openSecretDF[:1], catTable)
 
 
 
