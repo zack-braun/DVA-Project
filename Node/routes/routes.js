@@ -9,7 +9,10 @@ module.exports = function (app) {
     console.log(req.body)
     // Send data to ML model
     // Receive output from ML model
-    const matches = ['N00007360'];
+    const matches = [{
+      id: 'N00007360',
+      name: 'Nancy Pelosi',
+    }];
     // Send to front-end
     res.send({success: true, matches})
   });
