@@ -39,10 +39,10 @@ def addOpenSecretsIDs(df):
   usAPIMembers = [member for request in usAPILeg for member in request.json() ]
 
   usAPIMemberDF = pd.DataFrame(usAPIMembers)
-
   MemberIdDF = usAPIMemberDF.id.apply(pd.Series)
+  #print(MemberIdDF)
   MemberIdDF = MemberIdDF.loc[:,['govtrack', 'opensecrets']].rename(columns = {'govtrack':'govtrack_id'})
-
+  #print(MemberIdDF)
   MemberIdDF.loc[:, 'govtrack_id2'] = MemberIdDF.govtrack_id.astype(int)
   MemberIdDF.drop({'govtrack_id'}, axis = 1, inplace = True)
 
@@ -55,12 +55,43 @@ def addOpenSecretsIDs(df):
   #delete dup govtrack_ids
   del df['govtrack_id2']
 
+  df.dropna(subset = ['opensecrets'], inplace=True)
+
   return df
 
 def stripData(allMemberDF):
-  fecCandsDF = allMemberDF[allMemberDF['fec_candidate_id'] != '']
-  cleanedDF = fecCandsDF[['dw_nominate', 'govtrack_id']] #, 'icpsr_id' add if using addVoteViewData
-  cleanedDF.dropna(inplace=True)
+  fecCandsDF = allMemberDF[allMemberDF['govtrack_id'] != '']
+  cleanedDF = fecCandsDF[['dw_nominate',
+                          'govtrack_id',
+                          'at_large',
+                          'chamber',
+                          'congress',
+                          'date_of_birth',
+                          'district',
+                          'first_name',
+                          'gender',
+                          'in_office',
+                          'last_name',
+                          'last_updated',
+                          'leadership_role',
+                          'middle_name',
+                          'missed_votes',
+                          'missed_votes_pct',
+                          'next_election',
+                          'office',
+                          'party',
+                          'senate_class',
+                          'seniority',
+                          'short_title',
+                          'state',
+                          'state_rank',
+                          'suffix',
+                          'title',
+                          'total_present',
+                          'total_votes',
+                          'votes_with_party_pct']] #, 'icpsr_id' add if using addVoteViewData
+  #print(cleanedDF)
+  cleanedDF.dropna(subset = ['govtrack_id'], inplace=True)
   #print(cleanedDF)
   return cleanedDF
 
@@ -84,46 +115,58 @@ def createCatTable():
 
 
 def lookupCategorization(sector, catTable):
-  row = catTable[sector]
-  return row['name']
+  if(sector != ''):
+    row = catTable[sector]
+    return row['name']
+  else:
+    return 'EXCLUDED'
+
 
 
 
 def getCampaignFinance(row, catTable):
-  print(row)
+  #print(row['opensecrets'])
   url = "https://www.opensecrets.org/api/?method=candSector"
   params = {'apikey': apiKey4OpenSecrets,
-            'cid':'N00007360',
+            'cid': str(row['opensecrets']),
+            'cycle': 2018,
             'output': 'json'}
   r = requests.get(url, params=params)
-  print(r.url)
-  print(r)
-  print(r.json())
-  jsoned = r.json()
-  dicti = jsoned['response']['sectors']['sector']
-  financeDict = {
-                'Health': 0,
-                'Finance, Insurance & Real Estate': 0,
-                'Defense & Global Relations': 0,
-                'Agriculture, Food, & Consumer Goods': 0,
-                'Labor/Employment':0,
-                'Energy & Transportation': 0}
-  for industry in dicti:
-    print(industry)
-    category = lookupCategorization(industry['@attributes']['sectorid'], catTable)
-    if category == 'EXCLUDED':
-      pass
-      #do nothing
-    else:
-      financeDict[category] += (int)(industry['@attributes']['total'])
-  print(financeDict)
-  return financeDict
+  if(r.status_code == requests.codes.ok):
+    #print(r.url)
+    #print(r)
+    #print(r.json())
+    jsoned = r.json()
+    dicti = jsoned['response']['sectors']['sector']
+    financeDict = {
+                  'Health': 0,
+                  'Finance, Insurance & Real Estate': 0,
+                  'Defense & Global Relations': 0,
+                  'Agriculture, Food, & Consumer Goods': 0,
+                  'Labor/Employment':0,
+                  'Energy & Transportation': 0}
+    for industry in dicti:
+      print(industry)
+      #print(len(industry))
+      if(len(industry) == 1):
+        category = lookupCategorization(industry['@attributes']['sectorid'], catTable)
+        if category == 'EXCLUDED':
+          pass
+          #do nothing
+        else:
+          financeDict[category] += (int)(industry['@attributes']['total'])
+    #print(financeDict)
+    return financeDict
+  else:
+    return float('nan')
 
+def writeDF2CSV(df):
+  df.to_csv('combinedData.csv')
 
 if __name__ == "__main__":
 
   # Populate required API options
-  firstCongress = 113
+  firstCongress = 115
   lastCongress = 115
   congress = [str(c) for c in range(firstCongress, lastCongress+1)]
   chamber = ["house", "senate"]
@@ -133,8 +176,20 @@ if __name__ == "__main__":
   allMemberDF = getMemberData(congress, chamber, endPoint)
   stripedMemberDF = stripData(allMemberDF)
   openSecretDF = addOpenSecretsIDs(stripedMemberDF)
-  print(openSecretDF)
-  getCampaignFinance(openSecretDF[:1], catTable)
+  #print(openSecretDF)
+  financeDict = {}
+  for i, row in openSecretDF.iterrows():
+    #if i < 2:
+    print(i)
+    #print(row)
+    financeDict[row['opensecrets']] = getCampaignFinance(row, catTable)
+    #else:
+      #pass
+
+  openSecretDF['Finance'] = openSecretDF['opensecrets'].map(financeDict)
+  openSecretDF.dropna(subset = ['Finance'], inplace=True)
+  #print(openSecretDF)
+  writeDF2CSV(openSecretDF)
 
 
 
