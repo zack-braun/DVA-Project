@@ -55,9 +55,8 @@ class SurveyModal extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     const mlInput = this.convertSurveyDataForML(event);
-    return fetch('/submitSurvey', {
+    return window.RouteHelper.fetch('/submitSurvey', {
       method: 'POST',
-      headers: { "Content-Type": "application/json"  },
       body: JSON.stringify(mlInput),
     }).then((res) => {
       const { matches, success, message } = res;
@@ -66,6 +65,7 @@ class SurveyModal extends React.Component {
         for (let i=0; i<matches.length; i+=1) {
           //matches[i].cid
         }
+        this.props.showMatches(matches);
       } else {
         alert(res.message);
       }
@@ -194,6 +194,9 @@ class SurveyModal extends React.Component {
                   style={{width: "100%"}}
                   className="btn btn-primary"
                   type="submit"
+                  href={`#${modalID}`}
+                  data-target={`#${modalID}`}
+                  data-toggle="modal"
                 >Submit
                 </button>
               </Form>
