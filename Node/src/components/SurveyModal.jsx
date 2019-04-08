@@ -83,7 +83,7 @@ class SurveyModal extends React.Component {
                 <span aria-hidden="true">&times;</span>
                 <span className="sr-only">Close</span>
               </button>
-              <h4 className="modal-title">Find Your Connections</h4>
+              <h4 className="modal-title">Find Your Matches</h4>
             </div>
             <div className="modal-body" style={{textAlign: "center"}}>
 

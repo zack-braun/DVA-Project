@@ -28,7 +28,7 @@ class MainApp extends React.Component {
             href={`#${modalID}`}
             data-target={`#${modalID}`}
             data-toggle="modal"
-          >Find Your Connections</a> ♦ <a href="">How It Works</a>
+          >Find Your Matches</a> ♦ <a href="">How It Works</a>
         </h4>
         {this.state.showTable ? (<ConnectionTable matches={this.state.matches}/>) : (null)}
       </div>
