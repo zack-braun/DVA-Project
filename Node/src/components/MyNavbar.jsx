@@ -6,7 +6,7 @@ class MyNavbar extends React.Component {
   render() {
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top" style={{position: "sticky"}}>
-        <a className="navbar-brand" href="#"><i className="fa fa-project-diagram"></i>{' '}<i className="fa fa-donate"></i>{' '}How Money Connects Our Representatives</a>
+        <a className="navbar-brand" href="#"><i className="fa fa-project-diagram"></i>{' '}<i className="fa fa-donate"></i>{' '}Campaign Interests Vs. Your Interests</a>
       </nav>
     );
   }
