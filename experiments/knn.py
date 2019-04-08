@@ -1,9 +1,13 @@
 import csv
 import json
 import ast
+import time
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import AgglomerativeClustering
+import networkx as nx
 
 def readCSV():
   with open('combinedData.csv') as csv_file:
@@ -23,13 +27,76 @@ def readCSV():
     print(f'Processed {line_count} lines.')
     return TableDict
 
-def nn(arr):
-  print(arr[0])
-  nn = NearestNeighbors(n_neighbors=2, algorithm = "ball_tree").fit(arr)
-  distances, indices = nn.kneighbors(arr)
-  print(distances)
-  print(indices)
 
+def show_graph_with_labels(adjacency_matrix, mylabels):
+    rows, cols = np.where(adjacency_matrix == 1.)
+    edges = zip(rows.tolist(), cols.tolist())
+    gr = nx.Graph()
+    gr.add_edges_from(edges)
+    nx.draw(gr, node_size=100,  with_labels=True, node_text_size=5)
+    plt.show()
+
+
+def nn(arr):
+  algorithms = ["ball_tree", "kd_tree", "brute"]
+  leafSize = range(1, len(arr))
+  metrics = ['cityblock', 'minkowski', 'euclidean', 'l1', 'manhattan']
+  Dict = {}
+  mini = 100000000
+  miniAlgo = None
+  miniSize = 0
+  miniMetric = None
+  for algorithm in algorithms:
+    #print(algorithm)
+    Dict[algorithm] = {}
+    for size in leafSize:
+      Dict[algorithm][size] = {}
+      #print(size)
+      for metric in metrics:
+        Dict[algorithm][size][metric] = {}
+        #print(metric)
+        nn = NearestNeighbors(n_neighbors=6, algorithm = algorithm, leaf_size = size, metric = metric).fit(arr)
+        distances, indices = nn.kneighbors(arr)
+        #print(distances)
+        #print(indices)
+        #print(len(distances))
+        avgDistance = 0.0
+        for i in range(0, len(distances)):
+          rowDistance = 0.0
+          for j in range(0, len(distances[0])):
+            if(j != 0): #skip 0 since that is itself
+              rowDistance += distances[i][j]
+          #print(rowDistance)
+          avgDistance += (rowDistance / 5.0)
+        avgDistance = avgDistance / len(distances)
+        Dict[algorithm][size][metric] = avgDistance
+        if(avgDistance < mini):
+          mini = avgDistance
+          miniAlgo = algorithm
+          miniSize = size
+          miniMetric = metric
+        #print(avgDistance)
+
+  print(mini)
+  print(miniAlgo)
+  print(miniSize)
+  print(miniMetric)
+  df = pd.DataFrame.from_dict(Dict)
+  #print(df)
+  #df.plot()
+  #plt.show()
+  df.to_csv('NNEvaluation.csv')
+  #knn_graph = nn.kneighbors_graph(arr).toarray()
+  #print(knn_graph)
+  #show_graph_with_labels(knn_graph, range(0, len(arr)))
+  #plt.plot(knn_graph)
+  #plt.show()
+
+
+def normalize(val):
+  nominator = val - (0)
+  denominator = 1.0 - (0)
+  return (nominator/denominator)
 
 def parseFinanceData(Dict):
 
@@ -47,7 +114,7 @@ def parseFinanceData(Dict):
             jsoned['Labor/Employment'] + \
             jsoned['Energy & Transportation']
     #print(value['dw_nominate'])
-    dw = float(value['dw_nominate'])
+    dw = normalize(float(value['dw_nominate']))
     row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     if(total != 0):
       health = jsoned['Health'] / total
@@ -56,7 +123,7 @@ def parseFinanceData(Dict):
       ag = jsoned['Agriculture, Food, & Consumer Goods'] / total
       labor = jsoned['Labor/Employment'] / total
       energy = jsoned['Energy & Transportation'] / total
-      row  = [dw, health, realEstate, defense, ag, labor, energy]
+      row  = [dw * 0.5, normalize(health) *.083, normalize(realEstate) * .083, normalize(defense) * .083, normalize(ag) * .083, normalize(labor) * .083, normalize(energy) * .083]
     #print(row)
     rows.append(row)
   return rows
