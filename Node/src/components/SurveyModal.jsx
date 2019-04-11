@@ -2,6 +2,8 @@ import React from 'react';
 import Slider from './Slider.jsx';
 import { Form } from 'react-bootstrap';
 
+const budget = 400;
+
 class SurveyModal extends React.Component {
   constructor(props) {
     super();
@@ -24,7 +26,7 @@ class SurveyModal extends React.Component {
     for (let i=0; i<conservativePositive.length; i+=1) {
       dwNominate += parseInt(conservativePositive[i].value);
     }
-    dwNominate /= 18 * 50.0;
+    dwNominate /= budget;
     //Find ag, def, en, fin, he, lab
     //Combined they will sum to 1.0
     let ag = Math.abs(ag1.value) + Math.abs(ag2.value) + Math.abs(ag3.value);
@@ -49,12 +51,16 @@ class SurveyModal extends React.Component {
       he /= total;
       lab /= total;
     }
-    return { dwNominate, ag, def, en, fin, he, lab };
+    return { dwNominate, ag, def, en, fin, he, lab, total };
   }
 
   handleSubmit(event) {
     event.preventDefault();
     const mlInput = this.convertSurveyDataForML(event);
+    if (mlInput.total !== budget) {
+      alert("Sorry! The total amount of donations needs to equal $" + budget + ". Currently you are spending $" + mlInput.total + ".");
+      return;
+    }
     return window.RouteHelper.fetch('/submitSurvey', {
       method: 'POST',
       body: JSON.stringify(mlInput),
@@ -62,6 +68,7 @@ class SurveyModal extends React.Component {
       const { matches, success, message } = res;
       console.log(res)
       if (success) {
+        $('#' + this.props.modalID).modal('hide');
         for (let i=0; i<matches.length; i+=1) {
           //matches[i].cid
         }
@@ -86,6 +93,9 @@ class SurveyModal extends React.Component {
               <h4 className="modal-title">Find Your Matches</h4>
             </div>
             <div className="modal-body" style={{textAlign: "center"}}>
+              <h5><b>Instructions:</b>The following survey is designed to gauge your legislative priorities and political ideology. When filling out the survey, pretend you are given ${budget} to donate to the following 18 causes. You are able to donate up to $50 for each particular cause.</h5>
+              <br/>
+              <br/>
 
               <Form action="" onSubmit={this.handleSubmit}>
                 <h4>Agriculture, Food, and Consumer Goods</h4>
@@ -104,6 +114,8 @@ class SurveyModal extends React.Component {
                   rightLabel={"Spend less on food, drug, and consumer good regulation"}
                   name={"ag3"}
                 />
+              <br/>
+              <br/>
 
                 <h4>Defense and Global Relations</h4>
                 <Slider
@@ -121,6 +133,8 @@ class SurveyModal extends React.Component {
                   rightLabel={"Reduce budget for global relations and ambassadors"}
                   name={"def3"}
                 />
+              <br/>
+              <br/>
 
                 <h4>Energy and Transportation</h4>
                 <Slider
@@ -138,6 +152,8 @@ class SurveyModal extends React.Component {
                   rightLabel={"Reduce budget for transportation"}
                   name={"en3"}
                 />
+              <br/>
+              <br/>
 
                 <h4>Finance, Insurance, and Real Estate</h4>
                 <Slider
@@ -155,6 +171,8 @@ class SurveyModal extends React.Component {
                   rightLabel={"Reduce budget for social welfare and assistance programs"}
                   name={"fin3"}
                 />
+              <br/>
+              <br/>
 
                 <h4>Health</h4>
                 <Slider
@@ -172,6 +190,8 @@ class SurveyModal extends React.Component {
                   rightLabel={"Reduce budget for regulating pharmaceutical and healthcare industries"}
                   name={"he3"}
                 />
+              <br/>
+              <br/>
 
                 <h4>Labor and Employment</h4>
                 <Slider
@@ -194,9 +214,9 @@ class SurveyModal extends React.Component {
                   style={{width: "100%"}}
                   className="btn btn-primary"
                   type="submit"
-                  href={`#${modalID}`}
-                  data-target={`#${modalID}`}
-                  data-toggle="modal"
+                  //href={`#${modalID}`}
+                  //data-target={`#${modalID}`}
+                  //data-toggle="modal"
                 >Submit
                 </button>
               </Form>

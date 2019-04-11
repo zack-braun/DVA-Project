@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const candidateSchema = mongoose.Schema({
+const congressmanSchema = mongoose.Schema({
   id: String,
   name: String,
   party: String,
@@ -14,4 +14,4 @@ const candidateSchema = mongoose.Schema({
   lab: Number,
 });
 
-module.exports = mongoose.model('Candidate', candidateSchema);
+module.exports = mongoose.model('Congressman', congressmanSchema);

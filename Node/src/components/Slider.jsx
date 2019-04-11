@@ -6,7 +6,7 @@ class Slider extends React.Component {
     for (let i=50; i>=-50; i-=10) {
       if (i<0) {
         sliderTicks.push(
-          (<p>{'-$' + Math.abs(i)}</p>)
+          (<p>{'$' + Math.abs(i)}</p>)
         );
       } else {
         sliderTicks.push(
@@ -16,10 +16,10 @@ class Slider extends React.Component {
     }
     return (
       <div className="row" style={{textAlign: "center", marginBottom: "40px"}}>
-        <div className="col-sm-2">
+        <div className="col-sm-3">
           <label>{this.props.leftLabel}</label>
         </div>
-        <div className="col-sm-8">
+        <div className="col-sm-6">
           <div className="range">
             <input name={this.props.name} type="range" className="custom-range" min="-50" max="50" step="10" defaultValue="0" />
             <div className="sliderticks">
@@ -27,7 +27,7 @@ class Slider extends React.Component {
             </div>
           </div>
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-3">
           <label>{this.props.rightLabel}</label>
         </div>
       </div>

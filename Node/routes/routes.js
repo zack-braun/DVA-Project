@@ -11,8 +11,10 @@ module.exports = function (app) {
     // Receive output from ML model
     const matches = [{
       id: 'N00007360',
-      name: 'Nancy Pelosi',
+      id: 'N00013817',
+      id: 'N00037515',
     }];
+
     // Send to front-end
     res.send({success: true, matches})
   });
