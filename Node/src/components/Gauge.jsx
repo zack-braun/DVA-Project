@@ -1,29 +1,158 @@
 import React from 'react';
+import * as d3 from "d3";
+
+
 
 class Gauge extends React.Component {
+  constructor(props) {
+    super();
+  }
+  componentDidMount() {
+    this.drawGauge();
+    const thisGauge = this;
+    window.addEventListener('resize', function() {
+      thisGauge.resize.bind(thisGauge);
+    }, true);
+  }
+
+  resize() {
+    var $container = d3.select('#'+this.props.id);
+    $container.remove();
+    this.drawGauge();
+  }
+
+
+  drawGauge() {
+    var $container = d3.select('#'+this.props.id);
+    var width = parseFloat($container.style("width"));
+    var height = parseFloat($container.style("height"));
+
+    // Tick mark
+
+    var LF = 20;
+
+    var gauge_h = 60;
+
+    var chart_w = width;
+    var chart_y_pos = 0;
+
+    var result = (this.props.data + 1.0)/2.0;	// in a scale [0 1]
+    var resultPos = chart_w * result;
+
+    var text_margins = {top: chart_y_pos + gauge_h + 25, right: 10, bottom: 0, left: 10};
+
+    // Chart size -----------
+
+    var svg = d3.select('#'+this.props.id).append("svg")
+    .attr("width", '100%')
+    .attr("height", '100%');
+
+    var gradient = svg.append("svg:defs")
+      .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%")
+        .attr("spreadMethod", "pad");
+
+    gradient.append("svg:stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#00c")
+        .attr("stop-opacity", 1);
+
+    //gradient.append("svg:stop")
+    //    .attr("offset", "50%")
+    //    .attr("stop-color", "fff")
+    //    .attr("stop-opacity", 1);
+
+
+    gradient.append("svg:stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#c00")
+        .attr("stop-opacity", 1);
+
+    svg.append("g")
+      .append("rect")
+      .attr("x", 0 )
+      .attr("y", chart_y_pos )
+      .attr("width", "100%" )
+      .attr("height", gauge_h )
+      .style("fill", "url(#gradient)");
+
+
+    /****************************************
+    * Text, titles
+    *****************************************/
+
+    // Left percentage indicator
+    svg.append("g")
+      .append("text")
+      .attr("x", 0)
+      .attr("y", text_margins.top )
+      .text( "-1.0" );
+
+    svg.append("g")
+      .append("text")
+      .attr("x", 0)
+      .attr("y", text_margins.top + LF )
+      .text( "More Liberal" );
+
+    // Right percentage indicator
+
+    svg.append("g")
+      .append("text")
+      .classed("rightPrcnt", true )
+      .attr("x", "100%" )
+      .attr("y", text_margins.top )
+      .attr("text-anchor", "end")
+      .text( "1.0" );
+
+    svg.append("g")
+      .append("text")
+      .classed("rightLabel", true )
+      .attr("x", "100%" )
+      .attr("y", text_margins.top + LF )
+      .attr("text-anchor", "end")
+      .text( "More Conservative" );
+
+    /****************************************
+    * Result
+    *****************************************/
+
+
+    var tickMark = svg.append("g");
+
+    tickMark.append("line")
+      .attr("x1", resultPos)
+      .attr("y1", chart_y_pos )
+      .attr("x2", resultPos )
+      .attr("y2", gauge_h + chart_y_pos )
+      .attr("stroke-width", 3)
+      .attr("stroke", "gold");
+
+
+    tickMark.append("circle")
+      .attr("cx", resultPos)
+      .attr("cy", (gauge_h + chart_y_pos) / 2 )
+      .attr("r", 10)
+      .attr("stroke", "grey")
+      .attr("fill", "gold");
+
+    svg.append("g")
+      .append("text")
+      .attr("x", resultPos - 25)
+      .attr("y", text_margins.top )
+      .text( this.props.data );
+
+  }
+
+
   render() {
-    var chart = c3.generate({
-			data: {
-					columns: [
-							['DW Nominate', this.props.dw_nominate]
-					],
-					type: 'gauge',
-			},
-			color: {
-					pattern: ['#FF0000', '#F97600', '#F6C600'], // the three color levels for the percentage values.
-					threshold: {
-	            unit: 'value', // percentage is default
-	            max: 1, // 100 is default
-	            min: -1, // 100 is default
-							values: [-1.0, -0.2, 0.2]
-					}
-			},
-			size: {
-					height: 180
-			}
-	});
+
     return (
-      {chart}
+      <div className="linear-gauge" id={this.props.id}>
+      </div>
     );
   }
 }

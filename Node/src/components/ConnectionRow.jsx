@@ -42,6 +42,12 @@ class ConnectionRow extends React.Component {
             <p><b>Bio:</b> {name.official_full} has spent {seniority} years in office and votes with the {currentTerm.party} party {votes_with_party_pct}% of the time.</p>
             <p><b>DW Nominate Score:</b></p>
             <div style={{display: "flex", justifyContent: "center"}}>
+              <Gauge
+                data={dw_nominate}
+                id={gaugeID}
+              />
+            </div>
+            {/*<div style={{display: "flex", justifyContent: "center"}}>
               <div style={{display: "flex", justifyContent: "center", maxWidth: "300px", textAlign: "center"}}>
                 <p style={{marginTop: "47px"}}>More Conservative</p>
                 <C3GaugeActual
@@ -61,7 +67,7 @@ class ConnectionRow extends React.Component {
                 />
                 <p style={{marginTop: "47px"}}>More Liberal</p>
               </div>
-            </div>
+            </div>*/}
           </div>
         </td>
         <td>
