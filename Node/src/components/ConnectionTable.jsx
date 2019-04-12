@@ -3,13 +3,13 @@ import ConnectionRow from './ConnectionRow.jsx';
 
 class ConnectionTable extends React.Component {
   render() {
-    const { matches, customStyle } = this.props;
+    const { matches } = this.props;
     const rows = matches.map(data => (
       <ConnectionRow rowData={data} key={`${data.opensecrets.opensecrets}ConnectionRow`} />
     ));
 
     return (
-      <div className="col-sm-12" style={customStyle}>
+      <div className="col-sm-12" style={{display: "flex", justifyContent: "center"}}>
         <div className="well">
           <h3> The congressmen you most closely align with... </h3>
           <table className="table">

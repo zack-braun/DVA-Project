@@ -51,3 +51,10 @@
   line-height: 40px;
   margin: 0 0 20px 0;
 }
+
+.c3-chart-arcs-background{fill:#0000CC;stroke:none} 
+
+.sizing {
+  top: -15px;
+  max-width: 200px;
+}

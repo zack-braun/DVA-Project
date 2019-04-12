@@ -80,7 +80,7 @@ class SurveyModal extends React.Component {
     const { modalID } = this.props;
     return (
       <div className="modal fade" id={modalID} tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog" style={{width: "90%"}}>
+        <div className="modal-dialog" style={{width: "90%", maxWidth: "800px"}}>
           <div className="modal-content">
             <div className="modal-header">
               <button type="button" className="close" data-dismiss="modal">
@@ -89,8 +89,8 @@ class SurveyModal extends React.Component {
               </button>
               <h4 className="modal-title">Find Your Matches</h4>
             </div>
-            <div className="modal-body" style={{textAlign: "center"}}>
-              <h5><b>Instructions:</b>The following survey is designed to gauge your legislative priorities and political ideology. When filling out the survey, pretend you are given ${budget} to donate to the following 18 causes. You are able to donate up to $50 for each particular cause.</h5>
+            <div className="modal-body" style={{textAlign: "center", padding: "32px"}}>
+              <h5 style={{textAlign: "left"}}><b>Instructions: </b> The following survey is designed to gauge your legislative priorities and political ideology. When filling out the survey, pretend you are given ${budget} to donate to the following 18 causes. You are able to donate up to $50 for each particular cause.</h5>
               <br/>
               <br/>
 
