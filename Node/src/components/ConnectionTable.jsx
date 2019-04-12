@@ -4,9 +4,12 @@ import ConnectionRow from './ConnectionRow.jsx';
 class ConnectionTable extends React.Component {
   render() {
     const { matches } = this.props;
-    const rows = matches.map(data => (
-      <ConnectionRow rowData={data} key={`${data.opensecrets.opensecrets}ConnectionRow`} />
-    ));
+    const rows = [];
+    for (let i=0; i<matches.length; i+=1) {
+      rows.push(
+        <ConnectionRow rowData={matches[i]} rank={i+1} key={`${matches[i].opensecrets.opensecrets}ConnectionRow`} />
+      );
+    }
 
     return (
       <div className="col-sm-12" style={{display: "flex", justifyContent: "center"}}>

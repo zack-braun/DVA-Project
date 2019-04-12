@@ -2,7 +2,7 @@ import React from 'react';
 import Slider from './Slider.jsx';
 import { Form } from 'react-bootstrap';
 
-const budget = 400;
+const budget = 0;
 
 class SurveyModal extends React.Component {
   constructor(props) {

@@ -21,6 +21,7 @@ module.exports = function (app) {
       congressmen.push({
         opensecrets: await Congressman.findByOpensecrets(matches[i]),
         legislators: await Legislator.findByOpensecrets(matches[i]),
+        reqBody: req.body,
       }
       );
     }

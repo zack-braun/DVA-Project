@@ -1,12 +1,12 @@
 import React from 'react';
 import Gauge from './Gauge.jsx';
-import C3GaugeActual from './C3GaugeActual.jsx';
+import InfoModal from './InfoModal.jsx';
 import '../css/fontawesome-all.min.css';
 
 class ConnectionRow extends React.Component {
   render() {
-    const { rowData } = this.props;
-    const { opensecrets, legislators } = rowData;
+    const { rowData, rank } = this.props;
+    const { opensecrets, legislators, reqBody } = rowData;
     const modalID = `infoModal${opensecrets.opensecrets}`;
 
     console.log(rowData)
@@ -47,27 +47,6 @@ class ConnectionRow extends React.Component {
                 id={gaugeID}
               />
             </div>
-            {/*<div style={{display: "flex", justifyContent: "center"}}>
-              <div style={{display: "flex", justifyContent: "center", maxWidth: "300px", textAlign: "center"}}>
-                <p style={{marginTop: "47px"}}>More Conservative</p>
-                <C3GaugeActual
-                  data={dw_nominate}
-                  id={gaugeID}
-                  thresholds={[-50]}
-                  gauge={{
-                    min: -1.0,
-                    max: 1.0,
-                    label: {
-                      format(value) {
-                        return `${value}`;
-                      },
-                    },
-                    width: 15,
-                  }}
-                />
-                <p style={{marginTop: "47px"}}>More Liberal</p>
-              </div>
-            </div>*/}
           </div>
         </td>
         <td>
@@ -79,6 +58,13 @@ class ConnectionRow extends React.Component {
           >
             <i className="fa fa-search" aria-hidden="true" />
           </button>
+          <InfoModal
+            opensecrets={opensecrets}
+            legislators={legislators}
+            reqBody={reqBody}
+            rank={rank}
+            modalID={modalID}
+          />
         </td>
       </tr>
     );

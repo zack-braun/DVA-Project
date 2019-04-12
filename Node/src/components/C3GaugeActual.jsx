@@ -1,41 +1,34 @@
 import React from 'react';
 
-class C3GaugeActual extends React.Component {
+class C3Bar extends React.Component {
   componentDidMount() {
-    this.renderChart(this.props.data, this.props.id, this.props.thresholds, this.props.gauge);
+    this.renderChart(this.props.data, this.props.id, this.props.thresholds, this.props.bar);
   }
 
   componentWillReceiveProps(newProps) {
     if (this.props.data != newProps.data) {
-      this.gauge.load({
+      this.bar.load({
         columns: [['data', newProps.data]],
       });
     }
   }
 
-  renderChart(theData, theId, theThresholds, theGauge) {
-    this.gauge = c3.generate({
+  renderChart(theData, theId, theThresholds, theBar) {
+    this.bar = c3.generate({
       bindto: `#${theId}`,
       interaction: {
         enabled: false,
       },
       data: {
         columns: [['data', theData]],
-        type: 'gauge',
+        type: 'bar',
       },
-      gauge: theGauge,
-      color: {
-        pattern: ['#CC0000'],
-        threshold: {
-          unit: 'value',
-          values: theThresholds,
-        },
-      },
-      padding: {
-        // bottom: 20,
-      },
+      bar: theBar,
+      axis: {
+        rotated: true,
+      }
       legend: {
-        show: false,
+        show: true,
       },
       size: {
         height: 120,
@@ -50,4 +43,4 @@ class C3GaugeActual extends React.Component {
   }
 }
 
-export default C3GaugeActual;
+export default C3Bar;
