@@ -5,7 +5,7 @@ class ConnectionTable extends React.Component {
   render() {
     const { matches, customStyle } = this.props;
     const rows = matches.map(data => (
-      <ConnectionRow rowData={data} key={`${data.id}ConnectionRow`} />
+      <ConnectionRow rowData={data} key={`${data.opensecrets.opensecrets}ConnectionRow`} />
     ));
 
     return (

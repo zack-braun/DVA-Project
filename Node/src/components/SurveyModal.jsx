@@ -2,7 +2,7 @@ import React from 'react';
 import Slider from './Slider.jsx';
 import { Form } from 'react-bootstrap';
 
-const budget = 400;
+const budget = 0;
 
 class SurveyModal extends React.Component {
   constructor(props) {
@@ -65,14 +65,11 @@ class SurveyModal extends React.Component {
       method: 'POST',
       body: JSON.stringify(mlInput),
     }).then((res) => {
-      const { matches, success, message } = res;
+      const { congressmen, success, message } = res;
       console.log(res)
       if (success) {
         $('#' + this.props.modalID).modal('hide');
-        for (let i=0; i<matches.length; i+=1) {
-          //matches[i].cid
-        }
-        this.props.showMatches(matches);
+        this.props.showMatches(congressmen);
       } else {
         alert(res.message);
       }
