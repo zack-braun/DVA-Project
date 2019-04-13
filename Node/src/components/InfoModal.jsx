@@ -43,12 +43,10 @@ class InfoModal extends React.Component {
       congressman.push(Finance[categories[i]] / sumCategories * 100);
       you.push(reqBody[abbrevMap[categories[i]]] * 100);
     }
-    console.log(you)
-
 
     return (
       <div className="modal fade" id={modalID} tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog" style={{width: "90%", maxWidth: "1000px"}}>
+        <div className="modal-dialog" style={{width: "90%", maxWidth: "900px"}}>
           <div className="modal-content">
             <div className="modal-header">
               <button type="button" className="close" data-dismiss="modal">
@@ -57,13 +55,13 @@ class InfoModal extends React.Component {
               </button>
               <h4 className="modal-title"><b>Your #{rank} Match:</b> {opensecrets.short_title} {legislators.name.official_full}</h4>
             </div>
-            <div className="modal-body" style={{padding: "32px", height:"900px"}}>
+            <div className="modal-body" style={{padding: "32px", height:"500px"}}>
+              <h4 style={{textAlign: "center"}}>{"Where Is " + legislators.name.official_full + " Receiving Campaign Donations?"}</h4>
               <C3Bar
                 data={{
                   columns: [congressman, you],
                   type: 'bar',
                 }}
-                title={"Where Is " + legislators.name.official_full + " Receiving Campaign Donations?"}
                 id={modalID + 'bar'}
                 categories={categories}
                 bar={{

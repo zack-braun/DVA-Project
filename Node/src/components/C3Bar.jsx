@@ -17,7 +17,7 @@ class C3Bar extends React.Component {
     this.bar = c3.generate({
       bindto: `#${theId}`,
       interaction: {
-        enabled: false,
+        enabled: true,
       },
       data: theData,
       title: theTitle,
