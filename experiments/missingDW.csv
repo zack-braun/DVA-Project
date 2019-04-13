@@ -1,0 +1,14 @@
+,dw_nominate,chamber,gender,missed_votes_pct,party,seniority,state,title,govtrack_id,votes_with_party_pct,BirthYear,opensecrets
+0,,House,M,0.86,R,2,OH,Representative,412747,100.0,1962,N00042194
+1,,House,F,,D,16,GU,Delegate,400041,,1933,N00024866
+2,,House,M,0.0,R,2,TX,Representative,412746,95.16,1975,N00041882
+3,,House,F,,R,2,PR,Resident Commissioner,412723,,1976,N00037615
+4,,House,M,0.0,R,2,OK,Representative,412748,97.62,1961,
+5,,House,M,1.19,D,2,NY,Representative,412749,98.8,1957,
+6,,House,F,,D,28,DC,Delegate,400295,,1937,N00001692
+7,,House,F,,D,4,VI,Delegate,412659,,1966,N00035000
+8,,House,F,,R,4,AS,Delegate,412664,,1947,N00007635
+9,,House,M,,D,10,MP,Delegate,412312,,1955,N00030418
+10,,House,F,1.19,D,2,PA,Representative,412750,97.59,1959,
+11,,House,F,12.66,D,2,PA,Representative,412751,98.55,1957,
+12,,Senate,M,1.39,R,1,AZ,"Senator, 3rd Class",300062,95.77,1942,N00006406

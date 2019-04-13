@@ -5,8 +5,12 @@ import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.decomposition import PCA
 import networkx as nx
 
 def readCSV():
@@ -36,11 +40,95 @@ def show_graph_with_labels(adjacency_matrix, mylabels):
     nx.draw(gr, node_size=100,  with_labels=True, node_text_size=5)
     plt.show()
 
+def kmeans(arr):
+  #kmeans = KMeans(n_clusters=2, random_state=0).fit(arr)
+
+  range_n_clusters = range(2, 50)
+  silhouette_avgs = []
+  #print(arr)
+  for n_clusters in range_n_clusters:
+
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeansLabels = kmeans.fit_predict(arr)
+    #print(kmeans.labels_)
+    #print(kmeans.cluster_centers_)
+
+    # The silhouette_score gives the average value for all the samples.
+    # This gives a perspective into the density and separation of the formed
+    # clusters
+    silhouette_avg = silhouette_score(arr, kmeansLabels)
+    print("For n_clusters =", n_clusters,
+          "The average silhouette_score is :", silhouette_avg)
+
+
+    silhouette_avgs.append(silhouette_avg)
+    # Compute the silhouette scores for each sample
+    #sample_silhouette_values = silhouette_samples(arr, cluster_labels)
+
+
+  #data = []
+  #print(len(arr))
+  #for i in range(len(arr)):
+    #data.append([arr[i][0], arr[i][1]])
+  #plt.plot(range_n_clusters, silhouette_avgs)
+  #plt.title('K-means clustering Silhouette Scores')
+  #plt.ylabel("Silhouette Average")
+  #plt.xlabel("Number of Clusters")
+  #plt.savefig("K-means Silhouette Scores")
+
+
+  #plt.show()
+
+  deltas = list()
+  bestCluster = None
+  for n_cluster in range_n_clusters:
+    print(n_cluster)
+    delta = silhouette_avgs[n_cluster - 2] - silhouette_avgs[n_cluster - 1]
+    deltas.insert(0, delta)
+    if len(deltas) > 10:
+      if sum(deltas) / float(len(deltas)) < 0.0005:
+        bestCluster = n_cluster
+        break
+      deltas.pop()
+
+  print(bestCluster)
+
+  data = np.array(arr)
+
+  kmeans = KMeans(n_clusters=bestCluster)
+  kmeans.fit(data[:, 0:2])
+
+  Z = kmeans.predict(data[:, 0:2])
+
+  plt.figure(1)
+  plt.clf()
+
+  colors = cm.rainbow(np.linspace(0, 1, bestCluster))
+  for i in range(len(data)):
+    X = data[i, 0]
+    y = data[i, 1]
+    color = colors[Z[i]]
+    plt.plot(X, y, 'k.', markersize=4, color=color)
+    #plt.plot(data[:, 0], data[:, 1], 'k.', markersize=2)
+  # Plot the centroids as a white X
+  centroids = kmeans.cluster_centers_
+  print(centroids)
+  plt.scatter(centroids[:, 0], centroids[:, 1],
+              marker='x', s=169, linewidths=3,
+              color='k', zorder=10)
+  plt.title('K-means clustering')
+  plt.ylabel("Health Contributions (Normalized)")
+  plt.xlabel("DW-Nominate (Normalized)")
+  #plt.show()
+  plt.savefig("K-means clustering")
 
 def nn(arr):
   algorithms = ["ball_tree", "kd_tree", "brute"]
+  algorithms = ["ball_tree"]
   leafSize = range(1, len(arr))
+  leafSize = range(1,2)
   metrics = ['cityblock', 'minkowski', 'euclidean', 'l1', 'manhattan']
+  metrics = ["cityblock"]
   Dict = {}
   mini = 100000000
   miniAlgo = None
@@ -57,7 +145,7 @@ def nn(arr):
         #print(metric)
         nn = NearestNeighbors(n_neighbors=6, algorithm = algorithm, leaf_size = size, metric = metric).fit(arr)
         distances, indices = nn.kneighbors(arr)
-        #print(distances)
+        calcSilScore(distances)
         #print(indices)
         #print(len(distances))
         avgDistance = 0.0
@@ -93,10 +181,14 @@ def nn(arr):
   #plt.show()
 
 
-def normalize(val):
-  nominator = val - (0)
-  denominator = 1.0 - (0)
+def normalize(val, mini, maxi):
+  nominator = val - (mini)
+  denominator = maxi - (mini)
   return (nominator/denominator)
+
+def inverseNormalize(normalizedVal, mini, maxi):
+  val = (normalizedVal * (maxi - mini)) + mini
+  return val
 
 def parseFinanceData(Dict):
 
@@ -107,14 +199,20 @@ def parseFinanceData(Dict):
     #print(value['Finance'])
     jsoned = ast.literal_eval(value['Finance'])
     #print(jsoned['Health'])
+    for key2, value2 in jsoned.items():
+      if(value2 < 0 and key2 != 'dw_nominate'):
+        jsoned[key2] = 0
+
     total = jsoned['Health']+ \
             jsoned['Finance, Insurance & Real Estate'] + \
             jsoned['Defense & Global Relations'] + \
             jsoned['Agriculture, Food, & Consumer Goods'] + \
             jsoned['Labor/Employment'] + \
             jsoned['Energy & Transportation']
+
     #print(value['dw_nominate'])
-    dw = normalize(float(value['dw_nominate']))
+
+    dw = normalize(float(value['dw_nominate']), -1.0, 1.0)
     row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     if(total != 0):
       health = jsoned['Health'] / total
@@ -123,12 +221,20 @@ def parseFinanceData(Dict):
       ag = jsoned['Agriculture, Food, & Consumer Goods'] / total
       labor = jsoned['Labor/Employment'] / total
       energy = jsoned['Energy & Transportation'] / total
-      row  = [dw * 0.5, normalize(health) *.083, normalize(realEstate) * .083, normalize(defense) * .083, normalize(ag) * .083, normalize(labor) * .083, normalize(energy) * .083]
-    #print(row)
+      row  = [dw,
+              health,
+              realEstate,
+              defense,
+              ag ,
+              labor ,
+              energy]
+    if(row[1] < 0):
+      print(row)
     rows.append(row)
   return rows
 
 if __name__ == "__main__":
   Dict = readCSV()
   arr = parseFinanceData(Dict)
-  nn(arr)
+  #nn(arr)
+  kmeans(arr)
