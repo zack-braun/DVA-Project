@@ -43,7 +43,7 @@ def show_graph_with_labels(adjacency_matrix, mylabels):
 def kmeans(arr):
   #kmeans = KMeans(n_clusters=2, random_state=0).fit(arr)
 
-  range_n_clusters = range(2, 50)
+  range_n_clusters = range(2, 100)
   silhouette_avgs = []
   #print(arr)
   for n_clusters in range_n_clusters:
