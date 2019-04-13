@@ -6,7 +6,7 @@ const Congressman = require('../controllers/Congressman.js');
 const Legislator = require('../controllers/Legislator.js');
 const kmeans = require('../controllers/kmeans.js');
 
-kmeans.initData(Congressman);
+kmeans.startKmeans(Congressman);
 
 // reveals main.js properties to routes
 module.exports = function (app) {
