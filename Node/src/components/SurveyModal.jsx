@@ -27,6 +27,9 @@ class SurveyModal extends React.Component {
       dwNominate += parseInt(conservativePositive[i].value);
     }
     dwNominate /= budget;
+    if (isNaN(dwNominate)) {
+      dwNominate = 0.0;
+    }
     //Find ag, def, en, fin, he, lab
     //Combined they will sum to 1.0
     let ag = Math.abs(ag1.value) + Math.abs(ag2.value) + Math.abs(ag3.value);
@@ -37,12 +40,12 @@ class SurveyModal extends React.Component {
     let lab = Math.abs(lab1.value) + Math.abs(lab2.value) + Math.abs(lab3.value);
     const total = ag + def + en + fin + he + lab;
     if (total === 0) {
-      ag = 0.2
-      def = 0.2;
-      en = 0.2;
-      fin = 0.2;
-      he = 0.2;
-      lab = 0.2;
+      ag = 1.0/6;
+      def = 1.0/6;
+      en = 1.0/6;
+      fin = 1.0/6;
+      he = 1.0/6;
+      lab = 1.0/6;
     } else {
       ag /= total;
       def /= total;

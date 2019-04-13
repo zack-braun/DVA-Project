@@ -14,11 +14,11 @@ class ConnectionTable extends React.Component {
     return (
       <div className="col-sm-12" style={{display: "flex", justifyContent: "center"}}>
         <div className="well">
-          <h3> The congressmen you most closely align with... </h3>
+          <h3> The congresspeople you most closely align with... </h3>
           <table className="table">
             <thead>
               <tr>
-                <th scope="col">Congressmen</th>
+                <th scope="col">Congressperson</th>
                 <th>More Details</th>
               </tr>
             </thead>

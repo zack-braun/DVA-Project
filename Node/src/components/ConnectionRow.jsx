@@ -17,6 +17,7 @@ class ConnectionRow extends React.Component {
         leadership = (<p><i>{leadership_roles[leadership_roles.length-1].title}</i></p>);
       }
     }
+    const matchRating = 99;
 
     const currentTerm = terms[terms.length-1];
     const { title, state, dw_nominate, seniority, missed_vote_pct, votes_with_party_pct } = opensecrets;
@@ -35,15 +36,18 @@ class ConnectionRow extends React.Component {
             />
             <p style={{fontWeight: "bold"}}>{name.official_full}</p>
             {leadership}
+            <p>{matchRating}% Match</p>
           </div>
           <div className="col-sm-9">
             <p><b>Position:</b> {title} ({state})</p>
             <p><b>Party:</b> {currentTerm.party}</p>
             <p><b>Bio:</b> {name.official_full} has spent {seniority} years in office and votes with the {currentTerm.party} party {votes_with_party_pct}% of the time.</p>
-            <p><b>DW Nominate Score:</b></p>
+            <p style={{marginBottom: "20px"}}><b>DW Nominate Score:</b></p>
             <div style={{display: "flex", justifyContent: "center"}}>
               <Gauge
                 data={dw_nominate}
+                dataYou={reqBody.dwNominate}
+                name={name.last}
                 id={gaugeID}
               />
             </div>

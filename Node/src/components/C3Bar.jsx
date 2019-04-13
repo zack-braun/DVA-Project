@@ -40,8 +40,8 @@ class C3Bar extends React.Component {
         position: 'right',
       },
       size: {
-        height: 520,
-        width: 900,
+        height: 320,
+        width: 800,
       },
     });
   }

@@ -55,7 +55,7 @@ class InfoModal extends React.Component {
                 <span aria-hidden="true">&times;</span>
                 <span className="sr-only">Close</span>
               </button>
-              <h4 className="modal-title">Your #{rank} Match: {opensecrets.short_title} {legislators.name.official_full}</h4>
+              <h4 className="modal-title"><b>Your #{rank} Match:</b> {opensecrets.short_title} {legislators.name.official_full}</h4>
             </div>
             <div className="modal-body" style={{padding: "32px", height:"900px"}}>
               <C3Bar

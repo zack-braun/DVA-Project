@@ -39,11 +39,16 @@ class Gauge extends React.Component {
     var result = (this.props.data + 1.0)/2.0;	// in a scale [0 1]
     var resultPos = chart_w * result;
 
+    var resultYou = (this.props.dataYou + 1.0)/2.0;	// in a scale [0 1]
+    var resultPosYou = chart_w * resultYou;
+
     var text_margins = {top: chart_y_pos + gauge_h + 25, right: 10, bottom: 0, left: 10};
 
     // Chart size -----------
 
     var svg = d3.select('#'+this.props.id).append("svg")
+    .style("font-family", "Helvetica")
+    .style("font-size", "12px")
     .attr("width", '100%')
     .attr("height", '100%');
 
@@ -139,11 +144,38 @@ class Gauge extends React.Component {
       .attr("stroke", "grey")
       .attr("fill", "gold");
 
+    const them = this.props.name + " = " + this.props.data.toFixed(2);
     svg.append("g")
       .append("text")
-      .attr("x", resultPos - 25)
-      .attr("y", text_margins.top )
-      .text( this.props.data );
+      .attr("x", resultPos - them.length / 2.0 * 7)
+      .attr("y", text_margins.bottom - 3)
+      .text( them );
+
+    //OTHER TICKMARK FOR YOU
+    var tickMarkYou = svg.append("g");
+
+    tickMarkYou.append("line")
+      .attr("x1", resultPosYou)
+      .attr("y1", chart_y_pos )
+      .attr("x2", resultPosYou )
+      .attr("y2", gauge_h + chart_y_pos )
+      .attr("stroke-width", 3)
+      .attr("stroke", "white");
+
+
+    tickMarkYou.append("circle")
+      .attr("cx", resultPosYou)
+      .attr("cy", (gauge_h + chart_y_pos) / 2 )
+      .attr("r", 10)
+      .attr("stroke", "grey")
+      .attr("fill", "white");
+
+    const you = "You = " + this.props.dataYou.toFixed(2);
+    svg.append("g")
+      .append("text")
+      .attr("x", resultPosYou - you.length / 2.0 * 7)
+      .attr("y", text_margins.top - 10)
+      .text( you );
 
   }
 
