@@ -10,24 +10,34 @@ kmeans.startKmeans(Congressman);
 
 // reveals main.js properties to routes
 module.exports = function (app) {
-
   app.post('/submitSurvey', async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     // Send data to ML model
     // Receive output from ML model
-    const matches = ['N00007360', 'N00013817', 'N00037515'];
+    const matchJson = await kmeans.runKmeans(req.body);
+    // console.log('here');
+    const matches = [];
+    for (const key in matchJson) {
+      if (matchJson.hasOwnProperty(key)) {
+        // console.log(key);
+        const congressmen = await Congressman.findByIndex(key);
+        // console.log(congressmen);
+        matches.push(congressmen);
+      }
+    }
 
     const congressmen = [];
     for (let i = 0; i < matches.length; i += 1) {
       // Should be async, but whatever
+      console.log(matches[i]);
       congressmen.push({
-        opensecrets: await Congressman.findByOpensecrets(matches[i]),
-        legislators: await Legislator.findByOpensecrets(matches[i]),
+        opensecrets: matches[i],
+        legislators: await Legislator.findByOpensecrets(matches[i].opensecrets),
         reqBody: req.body,
       });
     }
 
-    const allCongressmen = await kmeans.initData(Congressman);
+    const allCongressmen = kmeans.getInitData();
 
     // Send to front-end
     res.send({ success: true, congressmen, allCongressmen });

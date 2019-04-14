@@ -6,6 +6,9 @@ const Congressman = {
 
   findByOpensecrets: opensecrets => congressmanModel.findOne({ opensecrets }),
 
+  findByIndex: index => congressmanModel.findOne({ index }),
+
+
   parseFinanceData: (congressman) => {
     Finance = congressman.Finance.replace(/'/g, '@');
     Finance = Finance.replace(/"/g, "'");

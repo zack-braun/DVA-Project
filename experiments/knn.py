@@ -11,6 +11,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
+from sklearn.externals import joblib
 import networkx as nx
 
 def readCSV():
@@ -40,10 +41,14 @@ def show_graph_with_labels(adjacency_matrix, mylabels):
     nx.draw(gr, node_size=100,  with_labels=True, node_text_size=5)
     plt.show()
 
+def saveModel(model, filename):
+  # save the model to disk
+  joblib.dump(model, filename)
+
 def kmeans(arr):
   #kmeans = KMeans(n_clusters=2, random_state=0).fit(arr)
 
-  range_n_clusters = range(2, 100)
+  range_n_clusters = range(2, 40)
   silhouette_avgs = []
   #print(arr)
   for n_clusters in range_n_clusters:
@@ -96,9 +101,12 @@ def kmeans(arr):
   data = np.array(arr)
 
   kmeans = KMeans(n_clusters=bestCluster)
-  kmeans.fit(data[:, 0:2])
+  kmeans.fit(arr)
+  print(kmeans.labels_)
+  saveModel(kmeans, 'kmeans.sav')
+  #kmeans.fit(data[:, 0:2])
 
-  Z = kmeans.predict(data[:, 0:2])
+  #Z = kmeans.predict(data[:, 0:2])
 
   plt.figure(1)
   plt.clf()
@@ -120,7 +128,7 @@ def kmeans(arr):
   plt.ylabel("Health Contributions (Normalized)")
   plt.xlabel("DW-Nominate (Normalized)")
   #plt.show()
-  plt.savefig("K-means clustering")
+  #plt.savefig("K-means clustering")
 
 def nn(arr):
   algorithms = ["ball_tree", "kd_tree", "brute"]

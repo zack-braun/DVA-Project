@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const congressmanSchema = mongoose.Schema({
+  index: Number,
   opensecrets: String,
   first_name: String,
   last_name: String,
