@@ -5,6 +5,7 @@ const apiKey4OpenSecrets = 'd3f8992dc4e2d3ad0d1c50fcbecea064';
 const Congressman = require('../controllers/Congressman.js');
 const Legislator = require('../controllers/Legislator.js');
 const kmeans = require('../controllers/kmeans.js');
+const sortByKey = require('../controllers/utils.js');
 
 kmeans.startKmeans(Congressman);
 
@@ -15,32 +16,50 @@ module.exports = function (app) {
     // Send data to ML model
     // Receive output from ML model
     const matchJson = await kmeans.runKmeans(req.body);
+    console.log(matchJson)
     // console.log('here');
     const matches = [];
+    const percents = [];
     for (const key in matchJson) {
       if (matchJson.hasOwnProperty(key)) {
         // console.log(key);
         const congressmen = await Congressman.findByIndex(key);
         // console.log(congressmen);
         matches.push(congressmen);
+        percents.push(matchJson[key])
       }
     }
 
     const congressmen = [];
+    calls = [];
     for (let i = 0; i < matches.length; i += 1) {
       // Should be async, but whatever
-      console.log(matches[i]);
+      if (!matches[i].opensecrets) {
+        console.log("HERE", matches[i]);
+      }
+      calls.push(Legislator.findByOpensecrets(matches[i].opensecrets))
       congressmen.push({
         opensecrets: matches[i],
-        legislators: await Legislator.findByOpensecrets(matches[i].opensecrets),
+        //legislators: await ,
+        percentMatch: percents[i],
         reqBody: req.body,
       });
     }
+    let actualCongressmen = [];
+    const legislators = await Promise.all([...calls]);
+    for (let i = 0; i < matches.length; i += 1) {
+      if (legislators[i]) {
+        congressmen[i].legislators = legislators[i];
+        actualCongressmen.push(congressmen[i])
+      }
+    }
+    sortByKey(actualCongressmen, 'percentMatch')
+    actualCongressmen = actualCongressmen.reverse();
 
     const allCongressmen = kmeans.getInitData();
 
     // Send to front-end
-    res.send({ success: true, congressmen, allCongressmen });
+    res.send({ success: true, congressmen: actualCongressmen, allCongressmen });
   });
 
   app.get('/*', (req, res) => {

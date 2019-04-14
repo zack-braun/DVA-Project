@@ -6,7 +6,7 @@ import '../css/fontawesome-all.min.css';
 class ConnectionRow extends React.Component {
   render() {
     const { rowData, rank } = this.props;
-    const { opensecrets, legislators, reqBody } = rowData;
+    const { opensecrets, legislators, reqBody, percentMatch } = rowData;
     const modalID = `infoModal${opensecrets.opensecrets}`;
 
     console.log(rowData)
@@ -17,7 +17,7 @@ class ConnectionRow extends React.Component {
         leadership = (<p><i>{leadership_roles[leadership_roles.length-1].title}</i></p>);
       }
     }
-    const matchRating = 99;
+    const matchRating = (percentMatch * 100).toFixed(0);
 
     const currentTerm = terms[terms.length-1];
     const { title, state, dw_nominate, seniority, missed_vote_pct, votes_with_party_pct } = opensecrets;
