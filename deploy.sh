@@ -1,6 +1,6 @@
 #!/bin/bash
 SRC_DIR="./Node"
-DST_DIR="../incident-commander"
+DST_DIR="../dvaproj"
 
 cd "../dvaproj"
 echo "pull latest server changes"
@@ -31,5 +31,5 @@ read -p "Commit description: " desc
 git commit -m "$desc"
 
 echo "pushing to server"
-git push heroku master
+git push
 
