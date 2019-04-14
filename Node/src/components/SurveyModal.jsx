@@ -21,10 +21,10 @@ class SurveyModal extends React.Component {
     const conservativePositive = [ ag1, def1, en1 ];
     let dwNominate = 0.0;
     for (let i=0; i<liberalPositive.length; i+=1) {
-      dwNominate -= parseInt(liberalPositive[i].value);
+      dwNominate += parseInt(liberalPositive[i].value);
     }
     for (let i=0; i<conservativePositive.length; i+=1) {
-      dwNominate += parseInt(conservativePositive[i].value);
+      dwNominate -= parseInt(conservativePositive[i].value);
     }
     dwNominate /= budget;
     if (isNaN(dwNominate)) {
@@ -54,6 +54,7 @@ class SurveyModal extends React.Component {
       he /= total;
       lab /= total;
     }
+    console.log(dwNominate)
     return { dwNominate, ag, def, en, fin, he, lab, total };
   }
 
