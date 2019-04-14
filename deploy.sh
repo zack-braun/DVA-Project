@@ -9,7 +9,7 @@ git pull
 echo "deleting all files from dvaproj"
 rm -r *
 
-cd "../FireHUD"
+cd "../DVA-Project"
 
 FILES=("Procfile", "bebel.config.js", "config.js", "controllers", "dist", "main.js", "package-lock.json", "package.json", "postcss.config.js", "routes", "src", "webpack.config.js")
 for f in "${FILES[@]}"
