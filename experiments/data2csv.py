@@ -59,7 +59,7 @@ def addOpenSecretsIDs(df):
 
   return df
 
-def stripData(allMemberDF):
+def stripData(allMemberDF, missingDWDict):
   fecCandsDF = allMemberDF[allMemberDF['govtrack_id'] != '']
   cleanedDF = fecCandsDF[['dw_nominate',
                           'govtrack_id',
@@ -91,9 +91,37 @@ def stripData(allMemberDF):
                           'total_votes',
                           'votes_with_party_pct']] #, 'icpsr_id' add if using addVoteViewData
   #print(cleanedDF)
-  cleanedDF.dropna(subset = ['govtrack_id', 'dw_nominate'], inplace=True)
+  #print(missingDWDict)
+
+  """for index, row in cleanedDF.iterrows():
+    for key, value in missingDWDict.items():
+      #print(value)
+      if(row['govtrack_id'] == key):
+        cleanedDF.at[index, 'dw_nominate'] = value['dw_nominate']
+        print(row['dw_nominate'])"""
+  #cleanedDF[cleanedDF['govtrack_id'] == key]['dw_nominate'] = 2000
+  #print(missingDWDict)
+  cleanedDF['dw_nominate'] = cleanedDF['govtrack_id'].map(missingDWDict).fillna(cleanedDF['dw_nominate'])
   #print(cleanedDF)
+  cleanedDF.dropna(subset = ['govtrack_id', 'dw_nominate'], inplace=True)
+  #print((cleanedDF.shape))
   return cleanedDF
+
+def createMissingDWTable():
+    with open('missingDWpredictions.csv') as csv_file:
+      csv_reader = csv.reader(csv_file, delimiter=',')
+      line_count = 0
+      missingDWDict = {}
+      for row in csv_reader:
+          if line_count == 0:
+              print(f'Column names are {", ".join(row)}')
+              line_count += 1
+          else:
+              print(row)
+              missingDWDict[row[1]] = row[11]
+              line_count += 1
+      print(f'Processed {line_count} lines.')
+      return missingDWDict
 
 def createCatTable():
   with open('Catcode.csv') as csv_file:
@@ -174,7 +202,8 @@ if __name__ == "__main__":
 
   catTable = createCatTable()
   allMemberDF = getMemberData(congress, chamber, endPoint)
-  stripedMemberDF = stripData(allMemberDF)
+  missingDW = createMissingDWTable()
+  stripedMemberDF = stripData(allMemberDF, missingDW)
   openSecretDF = addOpenSecretsIDs(stripedMemberDF)
   #print(openSecretDF)
   financeDict = {}
