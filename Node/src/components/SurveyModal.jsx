@@ -68,9 +68,36 @@ class SurveyModal extends React.Component {
       method: 'POST',
       body: JSON.stringify(mlInput),
     }).then((res) => {
-      const { congressmen, success, message } = res;
+      const { congressmen, success, message, allCongressmen } = res;
       console.log(res)
       if (success) {
+        let ag = 0;
+        let def = 0;
+        let en = 0;
+        let fin = 0;
+        let he = 0;
+        let lab = 0;
+        let total = 0;
+        for (let i=0; i<allCongressmen.length; i+=1) {
+          ag += allCongressmen[i][4];
+          def += allCongressmen[i][3];
+          en += allCongressmen[i][6];
+          fin += allCongressmen[i][2];
+          he += allCongressmen[i][1];
+          lab += allCongressmen[i][5];
+          total += allCongressmen[i].slice(1,7).reduce(function(a, b) { return a + b;  }, 0);;
+        }
+        ag /= total;
+        def /= total;
+        en /= total;
+        fin /= total;
+        he /= total;
+        lab /= total;
+        const averages = {
+          ag, def, en, fin, he, lab
+        }
+        window.averages = averages;
+        
         $('#' + this.props.modalID).modal('hide');
         this.props.showMatches(congressmen);
       } else {

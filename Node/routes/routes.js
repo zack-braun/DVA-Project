@@ -10,6 +10,7 @@ kmeans.startKmeans(Congressman);
 
 // reveals main.js properties to routes
 module.exports = function (app) {
+
   app.post('/submitSurvey', async (req, res) => {
     console.log(req.body);
     // Send data to ML model
@@ -26,8 +27,10 @@ module.exports = function (app) {
       });
     }
 
+    const allCongressmen = await kmeans.initData(Congressman);
+
     // Send to front-end
-    res.send({ success: true, congressmen });
+    res.send({ success: true, congressmen, allCongressmen });
   });
 
   app.get('/*', (req, res) => {

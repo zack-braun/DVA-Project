@@ -5,14 +5,6 @@ class C3Bar extends React.Component {
     this.renderChart(this.props.data, this.props.id, this.props.categories, this.props.bar, this.props.title);
   }
 
-  //componentWillReceiveProps(newProps) {
-  //  if (this.props.data != newProps.data) {
-  //    this.bar.load({
-  //      columns: [['data', newProps.data]],
-  //    });
-  //  }
-  //}
-
   renderChart(theData, theId, theCategories, theBar, theTitle) {
     this.bar = c3.generate({
       bindto: `#${theId}`,
@@ -22,6 +14,16 @@ class C3Bar extends React.Component {
       data: theData,
       title: theTitle,
       bar: theBar,
+      tooltip: {
+        format: {
+          value: function (value, ratio, id, index) { return value.toFixed(0) + '%';  }
+        }
+      },
+      grid: {
+        y: {
+          show: true
+        }
+      },
       axis: {
         rotated: true,
         x: {
@@ -31,7 +33,8 @@ class C3Bar extends React.Component {
         y: {
           label: 'Percentage of Funds',
           tick: {
-            format: function (d) { return d+'%'; }
+            format: function (d) { return d+'%'; },
+            rotate: 45
           },
         },
       },

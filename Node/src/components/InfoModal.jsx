@@ -10,15 +10,6 @@ const abbrevMap = {
   "Labor/Employment": "lab",
 }
 
-const averages = {
-  "Agriculture, Food, & Consumer Goods": "ag",
-  "Defense & Global Relations": "def",
-  "Energy & Transportation": "en",
-  "Finance, Insurance & Real Estate": "fin",
-  "Health": "he",
-  "Labor/Employment": "lab",
-}
-
 class InfoModal extends React.Component {
   render() {
     const { opensecrets, legislators, rank, modalID, reqBody } = this.props;
@@ -28,8 +19,8 @@ class InfoModal extends React.Component {
     Finance = Finance.replace(/@/g, '"');
     Finance = JSON.parse(Finance);
     const congressman = ["Donations to " + legislators.name.last + "'s Campaign"];
-    const you = ["Your allocations"];
-    const avg = ["Congressional Average (2018)"];
+    const you = ["Your Allocations"];
+    const avg = ["Average Campaign Allocations"];
     const categories = [];
     let sumCategories = 0;
     for (var key in Finance) {
@@ -42,6 +33,7 @@ class InfoModal extends React.Component {
     for (let i=0; i<categories.length; i+=1) {
       congressman.push(Finance[categories[i]] / sumCategories * 100);
       you.push(reqBody[abbrevMap[categories[i]]] * 100);
+      avg.push(window.averages[abbrevMap[categories[i]]] * 100)
     }
 
     return (
@@ -59,7 +51,7 @@ class InfoModal extends React.Component {
               <h4 style={{textAlign: "center"}}>{"Where Is " + legislators.name.official_full + " Receiving Campaign Donations?"}</h4>
               <C3Bar
                 data={{
-                  columns: [congressman, you],
+                  columns: [congressman, you, avg],
                   type: 'bar',
                 }}
                 id={modalID + 'bar'}
