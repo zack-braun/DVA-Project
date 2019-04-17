@@ -1,6 +1,7 @@
 import React from 'react';
 import Slider from './Slider.jsx';
 import { Form } from 'react-bootstrap';
+const waitingDialog = require('bootstrap-waitingfor');
 
 const budget = 400;
 
@@ -65,10 +66,13 @@ class SurveyModal extends React.Component {
       alert("Sorry! The total amount of donations needs to equal $" + budget + ". Currently you are spending $" + mlInput.total + ".");
       return;
     }
+    $('#' + this.props.modalID).modal('hide');
+    waitingDialog.show('Loading Matches...', { dialogSize: 'm', progressType: 'warning' });
     return window.RouteHelper.fetch('/submitSurvey', {
       method: 'POST',
       body: JSON.stringify(mlInput),
     }).then((res) => {
+      waitingDialog.hide();
       const { congressmen, success, message, allCongressmen } = res;
       console.log(res)
       if (success) {
@@ -99,7 +103,6 @@ class SurveyModal extends React.Component {
         }
         window.averages = averages;
         
-        $('#' + this.props.modalID).modal('hide');
         this.props.showMatches(congressmen);
       } else {
         alert(res.message);

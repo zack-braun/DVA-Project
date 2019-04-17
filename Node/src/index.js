@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import 'semantic-ui-css/semantic.min.css';
 //import 'c3/c3.min.css';
 import './css/global.css';
+import HowItWorks from './images/howitworks.png';
+import OpenSecretsIcon from './images/opensecretsIcon.png';
 
 window.RouteHelper = new RouteHelper();
 
