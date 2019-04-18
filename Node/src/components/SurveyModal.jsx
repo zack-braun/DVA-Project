@@ -18,6 +18,8 @@ class SurveyModal extends React.Component {
     const { ag1, ag2, ag3, def1, def2, def3, en1, en2, en3, fin1, fin2, fin3, he1, he2, he3, lab1, lab2, lab3 } = event.target.elements;
     //Find dwNominate score
     //Score will be between -1.0 and 1.0
+    //Find sector ideology scores
+    //Each will be between -1.0 and 1.0
     const liberalPositive = [ ag2, ag3, def2, def3, en2, en3, fin1, fin2, fin3, he1, he2, he3, lab1, lab2, lab3 ];
     const conservativePositive = [ ag1, def1, en1 ];
     let dwNominate = 0.0;
@@ -55,8 +57,13 @@ class SurveyModal extends React.Component {
       he /= total;
       lab /= total;
     }
-    console.log(dwNominate)
-    return { dwNominate, ag, def, en, fin, he, lab, total };
+    const agid = (-ag1.value + parseInt(ag2.value) + parseInt(ag3.value)) / 150.0;
+    const defid = (-def1.value + parseInt(def2.value) + parseInt(def3.value)) / 150.0;
+    const enid = (-en1.value + parseInt(en2.value) + parseInt(en3.value)) / 150.0;
+    const finid = (parseInt(fin1.value) + parseInt(fin2.value) + parseInt(fin3.value)) / 150.0;
+    const heid = (parseInt(he1.value) + parseInt(he2.value) + parseInt(he3.value)) / 150.0;
+    const labid = (parseInt(lab1.value) + parseInt(lab2.value) + parseInt(lab3.value)) / 150.0;
+    return { dwNominate, ag, def, en, fin, he, lab, total, agid, defid, enid, finid, heid, labid };
   }
 
   handleSubmit(event) {
