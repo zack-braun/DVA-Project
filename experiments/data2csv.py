@@ -41,7 +41,7 @@ def addOpenSecretsIDs(df):
   usAPIMemberDF = pd.DataFrame(usAPIMembers)
   MemberIdDF = usAPIMemberDF.id.apply(pd.Series)
   #print(MemberIdDF)
-  MemberIdDF = MemberIdDF.loc[:,['govtrack', 'opensecrets']].rename(columns = {'govtrack':'govtrack_id'})
+  MemberIdDF = MemberIdDF.loc[:,['govtrack', 'opensecrets', 'bioguide']].rename(columns = {'govtrack':'govtrack_id'})
   #print(MemberIdDF)
   MemberIdDF.loc[:, 'govtrack_id2'] = MemberIdDF.govtrack_id.astype(int)
   MemberIdDF.drop({'govtrack_id'}, axis = 1, inplace = True)
@@ -114,14 +114,36 @@ def createMissingDWTable():
       missingDWDict = {}
       for row in csv_reader:
           if line_count == 0:
-              print(f'Column names are {", ".join(row)}')
+              #print(f'Column names are {", ".join(row)}')
               line_count += 1
           else:
-              print(row)
+              #print(row)
               missingDWDict[row[1]] = row[11]
               line_count += 1
-      print(f'Processed {line_count} lines.')
+      #print(f'Processed {line_count} lines.')
       return missingDWDict
+
+def addLegislativeIdealogy():
+      with open('ideologyByBillTopic.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        ideologyDWDict = {}
+        for row in csv_reader:
+            if line_count == 0:
+                #print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                #print(row)
+                ideologyDWDict[row[1]] = {'AgFood': row[2],
+                                          'DefenseGlobal': row[3],
+                                          'EnergyTransport':row[4],
+                                          'Finance':row[5],
+                                          'Health':row[6],
+                                          'LaborEmployment':row[7]}
+                line_count += 1
+        #print(f'Processed {line_count} lines.')
+      print(ideologyDWDict)
+      return ideologyDWDict
 
 def createCatTable():
   with open('Catcode.csv') as csv_file:
@@ -130,15 +152,15 @@ def createCatTable():
     CatTableDict = {}
     for row in csv_reader:
         if line_count == 0:
-            print(f'Column names are {", ".join(row)}')
+            #print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            print(row)
+            #print(row)
             CatTableDict[row[2][0]] = {
                                     'CatCode': row[0],
                                     'name': row[1]}
             line_count += 1
-    print(f'Processed {line_count} lines.')
+    #print(f'Processed {line_count} lines.')
     return CatTableDict
 
 
@@ -174,7 +196,7 @@ def getCampaignFinance(row, catTable):
                   'Labor/Employment':0,
                   'Energy & Transportation': 0}
     for industry in dicti:
-      print(industry)
+      #print(industry)
       #print(len(industry))
       if(len(industry) == 1):
         category = lookupCategorization(industry['@attributes']['sectorid'], catTable)
@@ -199,7 +221,7 @@ if __name__ == "__main__":
   congress = [str(c) for c in range(firstCongress, lastCongress+1)]
   chamber = ["house", "senate"]
   endPoint = "members.json"
-
+  ideologyDWDict = addLegislativeIdealogy()
   catTable = createCatTable()
   allMemberDF = getMemberData(congress, chamber, endPoint)
   missingDW = createMissingDWTable()
@@ -217,7 +239,7 @@ if __name__ == "__main__":
 
   openSecretDF['Finance'] = openSecretDF['opensecrets'].map(financeDict)
   openSecretDF.dropna(subset = ['Finance'], inplace=True)
-  #print(openSecretDF)
+  #print(openSecretDF.shape)
   writeDF2CSV(openSecretDF)
 
 
