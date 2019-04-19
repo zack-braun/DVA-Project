@@ -27,7 +27,8 @@ def readCSV():
             #print(row)
             #print(len(row))
             TableDict[row[0]] = {'dw_nominate': row[1],
-                                    'Finance': row[-1]}
+                                    'Finance': row[-1],
+                                    'ideaology': row[-2]}
             line_count += 1
     print(f'Processed {line_count} lines.')
     return TableDict
@@ -48,7 +49,7 @@ def saveModel(model, filename):
 def kmeans(arr):
   #kmeans = KMeans(n_clusters=2, random_state=0).fit(arr)
 
-  range_n_clusters = range(2, 40)
+  range_n_clusters = range(2, len(arr))
   silhouette_avgs = []
   #print(arr)
   for n_clusters in range_n_clusters:
@@ -71,15 +72,15 @@ def kmeans(arr):
     #sample_silhouette_values = silhouette_samples(arr, cluster_labels)
 
 
-  #data = []
+  data = []
   #print(len(arr))
-  #for i in range(len(arr)):
-    #data.append([arr[i][0], arr[i][1]])
-  #plt.plot(range_n_clusters, silhouette_avgs)
-  #plt.title('K-means clustering Silhouette Scores')
-  #plt.ylabel("Silhouette Average")
-  #plt.xlabel("Number of Clusters")
-  #plt.savefig("K-means Silhouette Scores")
+  for i in range(len(arr)):
+    data.append([arr[i][0], arr[i][1]])
+  plt.plot(range_n_clusters, silhouette_avgs)
+  plt.title('K-means clustering Silhouette Scores')
+  plt.ylabel("Silhouette Average")
+  plt.xlabel("Number of Clusters")
+  plt.savefig("K-means Silhouette Scores")
 
 
   #plt.show()
@@ -104,9 +105,9 @@ def kmeans(arr):
   kmeans.fit(arr)
   print(kmeans.labels_)
   saveModel(kmeans, 'kmeans.sav')
-  #kmeans.fit(data[:, 0:2])
+  kmeans.fit(data[:, 0:2])
 
-  #Z = kmeans.predict(data[:, 0:2])
+  Z = kmeans.predict(data[:, 0:2])
 
   plt.figure(1)
   plt.clf()
@@ -128,7 +129,7 @@ def kmeans(arr):
   plt.ylabel("Health Contributions (Normalized)")
   plt.xlabel("DW-Nominate (Normalized)")
   #plt.show()
-  #plt.savefig("K-means clustering")
+  plt.savefig("K-means clustering")
 
 def nn(arr):
   algorithms = ["ball_tree", "kd_tree", "brute"]
@@ -206,6 +207,7 @@ def parseFinanceData(Dict):
     #print(value)
     #print(value['Finance'])
     jsoned = ast.literal_eval(value['Finance'])
+    json2 = ast.literal_eval(value['ideaology'])
     #print(jsoned['Health'])
     for key2, value2 in jsoned.items():
       if(value2 < 0 and key2 != 'dw_nominate'):
@@ -220,8 +222,16 @@ def parseFinanceData(Dict):
 
     #print(value['dw_nominate'])
 
-    dw = normalize(float(value['dw_nominate']), -1.0, 1.0)
-    row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    #dw = normalize(float(value['dw_nominate']), -1.0, 1.0)
+    agFood = float(json2['AgFood'])
+    defense2 = float(json2['DefenseGlobal'])
+    et = float(json2['EnergyTransport'])
+    fin = float(json2['Finance'])
+    he = float(json2['Health'])
+    le = float(json2['LaborEmployment'])
+    dw = float(value['dw_nominate'])
+
+    row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, agFood, defense2, et, fin, he, le]
     if(total != 0):
       health = jsoned['Health'] / total
       realEstate = jsoned['Finance, Insurance & Real Estate'] / total
@@ -235,10 +245,16 @@ def parseFinanceData(Dict):
               defense,
               ag ,
               labor ,
-              energy]
-    if(row[1] < 0):
-      print(row)
+              energy,
+              agFood,
+              defense2,
+              et,
+              fin,
+              he,
+              le]
+
     rows.append(row)
+  #print(rows)
   return rows
 
 if __name__ == "__main__":

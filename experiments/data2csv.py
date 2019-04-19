@@ -142,7 +142,7 @@ def addLegislativeIdealogy():
                                           'LaborEmployment':row[7]}
                 line_count += 1
         #print(f'Processed {line_count} lines.')
-      print(ideologyDWDict)
+      #print(ideologyDWDict)
       return ideologyDWDict
 
 def createCatTable():
@@ -210,6 +210,7 @@ def getCampaignFinance(row, catTable):
   else:
     return float('nan')
 
+
 def writeDF2CSV(df):
   df.to_csv('combinedData.csv')
 
@@ -227,6 +228,9 @@ if __name__ == "__main__":
   missingDW = createMissingDWTable()
   stripedMemberDF = stripData(allMemberDF, missingDW)
   openSecretDF = addOpenSecretsIDs(stripedMemberDF)
+
+  openSecretDF['ideaology'] = openSecretDF['bioguide'].map(ideologyDWDict)
+
   #print(openSecretDF)
   financeDict = {}
   for i, row in openSecretDF.iterrows():
@@ -238,7 +242,7 @@ if __name__ == "__main__":
       #pass
 
   openSecretDF['Finance'] = openSecretDF['opensecrets'].map(financeDict)
-  openSecretDF.dropna(subset = ['Finance'], inplace=True)
+  openSecretDF.dropna(subset = ['Finance', 'ideaology'], inplace=True)
   #print(openSecretDF.shape)
   writeDF2CSV(openSecretDF)
 

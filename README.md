@@ -8,8 +8,8 @@ utilized the ProPublicaAPI and VoteviewAPI.
 
 2. "experiments" contains the csv's and json's where lots of our data was stored. It also contains python files
 used for experimenting and creating our KNN model:
-- data2csv.py: used to compile the congressional data from multiple APIs.
-- CalculateAverageIdeologyOfBillVotesByPrimaryTopic.ipynb: unsurprisingly used to calculate the average ideology
+- data2csv.py: used to compile the congressional data from multiple APIs. You will need to get new API keys from the sources listed at the top of the code (OpenSecrets and ProPublica)
+- CalculateAverageIdeologyOfBillVotesByPrimaryTopic.ipynb: used to calculate the average ideology
 of bill votes by their primary topic.
 - knn.py: used to create the KNN model and experiment with different Ks to find optimal silhouette scores. This
 file is also used to generate the plots "K-means clustering.png" and "K-means Silhouette Scores.png". The
@@ -27,14 +27,22 @@ saved KNN model, and the MongoDB database.
 
 INSTALLATION:
 For experimentation:
-1. install python3
+1. install python3 and pip install the following 
+requests             2.21.0 
+pandas               0.21.0  
+numpy                1.16.2  
+astor                0.7.1   
+matplotlib           3.0.3   
+sklearn              0.0     
+networkx             2.3     
 2. This will allow you to run "python3 knn.py" and regenerate the knn model.
 
 For the web application:
 View the app live at "dvaproj.herokuapp.com"
 OR
 Run the app locally:
-1. install npm on command line
+1. Install node (8.15.1) via Homebrew or similar package manager
+1. install npm (6.4.1) on command line
 2. With npm installed, inside "Node" directory type "npm install" and hit enter on the command line.
 3. Ensure node modules described correctly on package.json (should already be correct after "npm install").
 4. To run the web application, inside "Node" directory type "npm run dev" and hit enter on the command line.
