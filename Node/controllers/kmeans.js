@@ -31,6 +31,12 @@ const kmeans = {
     return finalArr;
   },
 
+  normalizeFeature: (val) => {
+    const nominator = val - (-1);
+    const denominator = 1 - (-1);
+    return (nominator / denominator);
+  },
+
   startKmeans: async (congressmenClass) => {
     initDataArr = await kmeans.initData(congressmenClass);
   },
@@ -39,7 +45,12 @@ const kmeans = {
     const temp = ['dwNominate', 'he', 'fin', 'def', 'ag', 'lab', 'en', 'agid', 'defid', 'enid', 'finid', 'heid', 'labid'];
     let str = '';
     for (let i = 0; i < temp.length; i += 1) {
-      str += `${userInput[temp[i]]},`;
+      if (i === 0 || i >= 7) {
+        console.log('norm');
+        str += `${kmeans.normalizeFeature(userInput[temp[i]])},`;
+      } else {
+        str += `${userInput[temp[i]]},`;
+      }
     }
     str = str.substring(0, str.length - 1);
     console.log(str);
@@ -51,7 +62,7 @@ const kmeans = {
       closestPeeps = data.toString();
       // console.log(closestPeeps);
       closestPeeps = closestPeeps.replace(/'/g, '"');
-      jsoned = JSON.parse(closestPeeps);
+      const jsoned = JSON.parse(closestPeeps);
       console.log(jsoned);
       resolve(jsoned);
     });

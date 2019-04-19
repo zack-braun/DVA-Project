@@ -223,13 +223,13 @@ def parseFinanceData(Dict):
     #print(value['dw_nominate'])
 
     #dw = normalize(float(value['dw_nominate']), -1.0, 1.0)
-    agFood = normalize(float(json2['AgFood']), 0, 1)
-    defense2 = normalize(float(json2['DefenseGlobal']), 0, 1)
-    et = normalize(float(json2['EnergyTransport']), 0, 1)
-    fin = normalize(float(json2['Finance']), 0, 1)
-    he = normalize(float(json2['Health']), 0, 1)
-    le = normalize(float(json2['LaborEmployment']), 0, 1)
-    dw = normalize(float(value['dw_nominate']), 0, 1) * 2.0
+    agFood = normalize(float(json2['AgFood']), -1, 1)
+    defense2 = normalize(float(json2['DefenseGlobal']), -1, 1)
+    et = normalize(float(json2['EnergyTransport']), -1, 1)
+    fin = normalize(float(json2['Finance']), -1, 1)
+    he = normalize(float(json2['Health']), -1, 1)
+    le = normalize(float(json2['LaborEmployment']), -1, 1)
+    dw = normalize(float(value['dw_nominate']), -1, 1) * 2.0
 
     row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, agFood, defense2, et, fin, he, le]
     if(total != 0):
