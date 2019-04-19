@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 
 const waitingDialog = require('bootstrap-waitingfor');
 
-const budget = 0;
+const budget = 400;
 
 class SurveyModal extends React.Component {
   constructor(props) {
