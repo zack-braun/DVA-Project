@@ -42,7 +42,8 @@ View the app live at "dvaproj.herokuapp.com"
 OR
 Run the app locally:
 1. Install node (8.15.1) via Homebrew or similar package manager
-1. install npm (6.4.1) on command line
+2. install npm (6.4.1) on command line
+3. Also install the above required python3 and pip packages
 2. With npm installed, inside "Node" directory type "npm install" and hit enter on the command line.
 3. Ensure node modules described correctly on package.json (should already be correct after "npm install").
 4. To run the web application, inside "Node" directory type "npm run dev" and hit enter on the command line.
