@@ -16,7 +16,7 @@ module.exports = function (app) {
     // Send data to ML model
     // Receive output from ML model
     const matchJson = await kmeans.runKmeans(req.body);
-    console.log(matchJson)
+    // console.log(matchJson);
     // console.log('here');
     const matches = [];
     const percents = [];
@@ -26,36 +26,40 @@ module.exports = function (app) {
         const congressmen = await Congressman.findByIndex(key);
         // console.log(congressmen);
         matches.push(congressmen);
-        percents.push(matchJson[key])
+        percents.push(matchJson[key]);
       }
     }
 
     const congressmen = [];
     calls = [];
+    console.log(matches);
     for (let i = 0; i < matches.length; i += 1) {
+      // console.log(i);
+      // console.log(matches[i]);
       // Should be async, but whatever
-      if (!matches[i].opensecrets) {
-        console.log("HERE", matches[i]);
+      if (matches[i] === null) {
+        console.log('HERE', matches[i]);
+      } else {
+        calls.push(Legislator.findByOpensecrets(matches[i].opensecrets));
+        congressmen.push({
+          opensecrets: matches[i],
+          // legislators: await ,
+          percentMatch: percents[i],
+          reqBody: req.body,
+        });
       }
-      calls.push(Legislator.findByOpensecrets(matches[i].opensecrets))
-      congressmen.push({
-        opensecrets: matches[i],
-        //legislators: await ,
-        percentMatch: percents[i],
-        reqBody: req.body,
-      });
     }
     let actualCongressmen = [];
     const legislators = await Promise.all([...calls]);
     for (let i = 0; i < matches.length; i += 1) {
       if (legislators[i]) {
         congressmen[i].legislators = legislators[i];
-        actualCongressmen.push(congressmen[i])
+        actualCongressmen.push(congressmen[i]);
       }
     }
-    sortByKey(actualCongressmen, 'percentMatch')
+    sortByKey(actualCongressmen, 'percentMatch');
     actualCongressmen = actualCongressmen.reverse();
-    //actualCongressmen = actualCongressmen.slice(0, 10);
+    actualCongressmen = actualCongressmen.slice(0, 10);
 
     const allCongressmen = kmeans.getInitData();
 

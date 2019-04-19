@@ -8,6 +8,15 @@ const Congressman = {
 
   findByIndex: index => congressmanModel.findOne({ index }),
 
+  parseIdeaologyData: (congressman) => {
+    // console.log(congressman);
+    Ideaology = congressman.ideaology.replace(/'/g, '@');
+    Ideaology = Ideaology.replace(/"/g, "'");
+    Ideaology = Ideaology.replace(/@/g, '"');
+    ideaology = JSON.parse(Ideaology);
+    // console.log(ideaology);
+    return ideaology;
+  },
 
   parseFinanceData: (congressman) => {
     Finance = congressman.Finance.replace(/'/g, '@');
