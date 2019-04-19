@@ -1,5 +1,7 @@
 import React from 'react';
 import C3Bar from './C3Bar.jsx';
+import Gauge from './Gauge.jsx';
+
 
 const abbrevMap = {
   "Agriculture, Food, & Consumer Goods": "ag",
