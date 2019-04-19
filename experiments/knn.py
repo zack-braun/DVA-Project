@@ -48,7 +48,7 @@ def saveModel(model, filename):
 
 def kmeans(arr):
   #kmeans = KMeans(n_clusters=2, random_state=0).fit(arr)
-
+  #print(arr[0])
   range_n_clusters = range(2, len(arr))
   silhouette_avgs = []
   #print(arr)
@@ -223,13 +223,13 @@ def parseFinanceData(Dict):
     #print(value['dw_nominate'])
 
     #dw = normalize(float(value['dw_nominate']), -1.0, 1.0)
-    agFood = float(json2['AgFood'])
-    defense2 = float(json2['DefenseGlobal'])
-    et = float(json2['EnergyTransport'])
-    fin = float(json2['Finance'])
-    he = float(json2['Health'])
-    le = float(json2['LaborEmployment'])
-    dw = float(value['dw_nominate'])
+    agFood = normalize(float(json2['AgFood']), 0, 1)
+    defense2 = normalize(float(json2['DefenseGlobal']), 0, 1)
+    et = normalize(float(json2['EnergyTransport']), 0, 1)
+    fin = normalize(float(json2['Finance']), 0, 1)
+    he = normalize(float(json2['Health']), 0, 1)
+    le = normalize(float(json2['LaborEmployment']), 0, 1)
+    dw = normalize(float(value['dw_nominate']), 0, 1) * 2.0
 
     row = [dw, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, agFood, defense2, et, fin, he, le]
     if(total != 0):
