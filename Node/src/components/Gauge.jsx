@@ -6,26 +6,47 @@ import * as d3 from "d3";
 class Gauge extends React.Component {
   constructor(props) {
     super();
+    //this.resize.bind(this);
+    this.drawGauge.bind(this);
   }
   componentDidMount() {
     this.drawGauge();
     const thisGauge = this;
-    window.addEventListener('resize', function() {
-      thisGauge.resize.bind(thisGauge);
-    }, true);
+    //window.addEventListener('resize', function() {
+    //  console.log("DD")
+    //  thisGauge.resize();
+    //}, true);
   }
 
-  resize() {
-    var $container = d3.select('#'+this.props.id);
-    $container.remove();
-    this.drawGauge();
-  }
+  //resize() {
+  //  console.log("RESIXE")
+  //  var $container = d3.select('#'+this.props.id);
+  //  this.drawGauge();
+  //  $container.remove();
+  //}
 
 
   drawGauge() {
-    var $container = d3.select('#'+this.props.id);
-    var width = parseFloat($container.style("width"));
-    var height = parseFloat($container.style("height"));
+    //var $container = d3.select('#'+this.props.id);
+    //var width = parseFloat($container.style("width"));
+    //var height = parseFloat($container.style("height"));
+    var $container = document.getElementById(this.props.id).getBoundingClientRect();
+    var width = parseFloat($container.width);
+    var height = parseFloat($container.height);
+    if (width === 0) {
+      width = 100;
+      height = 100;
+    }
+
+    //d3.select("div#"+this.props.id)
+    // .append("div")
+    // .classed("svg-container", true) //container class to make it responsive
+    // .append("svg")
+    // //responsive SVG needs these 2 attributes and no width and height attr
+    // .attr("preserveAspectRatio", "xMinYMin meet")
+    // .attr("viewBox", "0 0 600 400")
+    // //class to make it responsive
+    // .classed("svg-content-responsive", true); 
 
     // Tick mark
 
@@ -36,13 +57,15 @@ class Gauge extends React.Component {
     var chart_w = width;
     var chart_y_pos = 0;
 
-    var result = (this.props.data + 1.0)/2.0;	// in a scale [0 1]
-    var resultPos = chart_w * result;
+    var result = (parseFloat(this.props.data) + 1.0)/2.0;	// in a scale [0 1]
+    //var resultPos = chart_w * result;
+    var resultPos = (result *100).toString() + "%";
 
-    var resultYou = (this.props.dataYou + 1.0)/2.0;	// in a scale [0 1]
-    var resultPosYou = chart_w * resultYou;
+    var resultYou = (parseFloat(this.props.dataYou) + 1.0)/2.0;	// in a scale [0 1]
+    //var resultPosYou = chart_w * resultYou;
+    var resultPosYou = (resultYou *100).toString() + "%";
 
-    var text_margins = {top: chart_y_pos + gauge_h + 25, right: 10, bottom: 0, left: 10};
+    var text_margins = {top: chart_y_pos + gauge_h + 30, right: 10, bottom: 0, left: 10};
 
     // Chart size -----------
 
@@ -144,11 +167,13 @@ class Gauge extends React.Component {
       .attr("stroke", "grey")
       .attr("fill", "gold");
 
-    const them = this.props.name + " = " + this.props.data.toFixed(2);
+    const them = this.props.name + " = " + parseFloat(this.props.data).toFixed(2);
     svg.append("g")
       .append("text")
-      .attr("x", resultPos - them.length / 2.0 * 7)
+      //.attr("x", resultPos - them.length / 2.0 * 7)
+      .attr("x", resultPos)
       .attr("y", text_margins.bottom - 3)
+      .attr("text-anchor", "middle")
       .text( them );
 
     //OTHER TICKMARK FOR YOU
@@ -170,11 +195,13 @@ class Gauge extends React.Component {
       .attr("stroke", "grey")
       .attr("fill", "white");
 
-    const you = "You = " + this.props.dataYou.toFixed(2);
+    const you = "You = " + parseFloat(this.props.dataYou).toFixed(2);
     svg.append("g")
       .append("text")
-      .attr("x", resultPosYou - you.length / 2.0 * 7)
-      .attr("y", text_margins.top - 10)
+      .attr("x", resultPosYou)
+      //.attr("x", "50%")
+      .attr("y", text_margins.top - 15)
+      .attr("text-anchor", "middle")
       .text( you );
 
   }

@@ -13,7 +13,7 @@ const kmeans = {
       const financeDist = congressmenClass.parseFinanceData(arr[i]);
       const ideaology = congressmenClass.parseIdeaologyData(arr[i]);
       const dw = arr[i].dw_nominate;
-      finalArr[i] = [dw, financeDist.health, financeDist.fir, financeDist.dgr, financeDist.afc, financeDist.le, financeDist.et, ideaology.AgFood, ideaology.DefenseGlobal, ideaology.EnergyTransport, ideaology.Finance, ideaology.Health, ideaology.LaborEmployment];
+      finalArr[i] = [dw, financeDist.health, financeDist.fir, financeDist.dgr, financeDist.afc, financeDist.le, financeDist.et, ideaology.AgFood, ideaology.DefenseGlobal, ideaology.EnergyTransport, ideaology.Finance, ideaology.Health];
     }
     // console.log(finalArr);
     return finalArr;
