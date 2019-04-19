@@ -15,13 +15,15 @@ def Twostr(arr):
 
 def Threestr(arr):
   arr3 = ast.literal_eval(arr)
+  #print(arr3)
   oneD = []
   twoD = []
   for i in range(len(arr3)):
     oneD.append(arr3[i])
-    if(i % 7 == 0):
+    if(i % 13 == 0):
       twoD.append(oneD)
       oneD = []
+  #print(twoD)
   return twoD
 
 def predict(arr, model):
@@ -71,7 +73,7 @@ def convert2Percents(closePolys):
   for poly in closePolys:
     #print(poly)
     #print(poly[0])
-    percent = 1 / math.exp(poly[0])
+    percent = 1 / math.exp(poly[0]/4.0)
     #poly = (percent, poly[1])
     polys[str(poly[1])] = percent
   return polys
@@ -83,10 +85,14 @@ if __name__ == "__main__":
   model = loadModel()
   #print("loaded model")
   samplePoint = Twostr(sys.argv[1])
+  #print("after")
+  #print(samplePoint)
   prediction, clusters, labels = predict(samplePoint, model)
+  #print(prediction, clusters, labels)
   #maxCluster, minCluster = distancefromCentroids(clusters, samplePoint, prediction)
 
   vec = Threestr(sys.argv[2])
+  #print(vec)
   closePolys = distancefromLocalPoints(prediction, labels, vec, samplePoint)
   print(convert2Percents(closePolys))
 

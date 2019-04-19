@@ -104,7 +104,7 @@ def kmeans(arr):
   kmeans = KMeans(n_clusters=bestCluster)
   kmeans.fit(arr)
   print(kmeans.labels_)
-  saveModel(kmeans, 'kmeans.sav')
+  saveModel(kmeans, '../Node/controllers/kmeans.sav')
   kmeans.fit(data[:, 0:2])
 
   Z = kmeans.predict(data[:, 0:2])

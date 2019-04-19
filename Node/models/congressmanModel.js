@@ -15,6 +15,7 @@ const congressmanSchema = mongoose.Schema({
   votes_with_party_pct: Number,
   seniority: Number,
   Finance: String,
+  ideaology: String,
 });
 
 module.exports = mongoose.model('Congressman', congressmanSchema);
