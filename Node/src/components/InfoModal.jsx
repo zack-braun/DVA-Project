@@ -64,6 +64,12 @@ class InfoModal extends React.Component {
                   }
                 }}
               />
+              <Gauge
+                data={dw_nominate}
+                dataYou={reqBody.dwNominate}
+                name={name.last}
+                id={gaugeID}
+              />
             </div>
           </div>
         </div>
