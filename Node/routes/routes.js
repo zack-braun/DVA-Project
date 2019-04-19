@@ -59,6 +59,7 @@ module.exports = function (app) {
     }
     sortByKey(actualCongressmen, 'percentMatch');
     actualCongressmen = actualCongressmen.reverse();
+    //actualCongressmen = actualCongressmen.slice(0, 10);
 
     const allCongressmen = kmeans.getInitData();
 
