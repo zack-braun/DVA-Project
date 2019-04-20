@@ -20,12 +20,12 @@ const kmeans = {
         financeDist.afc,
         financeDist.le,
         financeDist.et,
-        ideaology.AgFood,
-        ideaology.DefenseGlobal,
-        ideaology.EnergyTransport,
-        ideaology.Finance,
-        ideaology.Health,
-        ideaology.LaborEmployment];
+        parseFloat(ideaology.AgFood).toFixed(2),
+        parseFloat(ideaology.DefenseGlobal).toFixed(2),
+        parseFloat(ideaology.EnergyTransport).toFixed(2),
+        parseFloat(ideaology.Finance).toFixed(2),
+        parseFloat(ideaology.Health).toFixed(2),
+        parseFloat(ideaology.LaborEmployment).toFixed(2)];
     }
     // console.log(finalArr);
     return finalArr;
@@ -34,7 +34,7 @@ const kmeans = {
   normalizeFeature: (val) => {
     const nominator = val - (-1);
     const denominator = 1 - (-1);
-    return (nominator / denominator);
+    return (nominator / denominator).toFixed(2);
   },
 
   startKmeans: async (congressmenClass) => {
